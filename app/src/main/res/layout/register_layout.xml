@@ -260,8 +260,6 @@
             android:id="@+id/register_editUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="phone"
-            android:digits="0123456789+"
             android:singleLine="true"
             android:visibility="visible"
             app:layout_constraintLeft_toLeftOf="parent"

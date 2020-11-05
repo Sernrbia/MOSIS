@@ -76,9 +76,6 @@ public class LogInActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void onInputLoginSent(CharSequence email, CharSequence password) {
-//        if(selectedFragment instanceof LoginFragment) {
-//            ((LoginFragment) selectedFragment).notification(email.toString() + " " + password.toString());
-//        }
 
         if(selectedFragment instanceof LoginFragment) {
             auth.signInWithEmailAndPassword(email.toString(), password.toString())
@@ -89,12 +86,12 @@ public class LogInActivity extends AppCompatActivity implements LoginFragment.Lo
                                 ((LoginFragment) selectedFragment).notification("Authentification success");
 //                                activeUser = auth.getCurrentUser();
 //                                Intent i = new Intent(LogInActivity.this, MainScreenActivity.class);
-                                //                            MyTokensData.getInstance().init();
-                                //                            AllUsersData.getInstance().resetListeners();
-                                //                            Intent i1= new Intent(LogInActivity.this, LocationService.class);
-                                //                            LogInActivity.this.startService(i1);
-                                //                            Intent i = new Intent(LogInActivity.this, Map.class);
-                                //                            i.putExtra("state", Map.SHOW_MAP);
+//                                                            MyTokensData.getInstance().init();
+//                                                            AllUsersData.getInstance().resetListeners();
+//                                                            Intent i1= new Intent(LogInActivity.this, LocationService.class);
+//                                                            LogInActivity.this.startService(i1);
+//                                                            Intent i = new Intent(LogInActivity.this, Map.class);
+//                                                            i.putExtra("state", Map.SHOW_MAP);
 //                                startActivity(i);
 //                                finish();
                             } else {
