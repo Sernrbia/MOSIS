@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-//import androidx.lifecycle.ViewModelProviders;
 
 import com.example.mosis_ispit.R;
 import com.example.mosis_ispit.addon.User;
@@ -20,8 +19,8 @@ import com.example.mosis_ispit.addon.User;
 import org.jetbrains.annotations.NotNull;
 
 public class RegisterFragment extends Fragment {
-//    RegisterVM viewmodel;
     private RegisterFragmentListener listener;
+    private EditText username;
     private EditText firstName;
     private EditText lastName;
     private EditText email;
@@ -29,7 +28,6 @@ public class RegisterFragment extends Fragment {
     private EditText confirmPassword;
     private EditText phone;
     private Button btnRegister;
-//    private Animation animation;
 
     public interface RegisterFragmentListener {
         void onInputRegister(User user);
@@ -40,8 +38,7 @@ public class RegisterFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.register_layout, container, false);
 
-//        animation = new Animation(view.findViewById(R.id.main_loading));
-
+        username = view.findViewById(R.id.register_editUsername);
         firstName = view.findViewById(R.id.register_editFirstName);
         lastName = view.findViewById(R.id.register_editLastName);
         email = view.findViewById(R.id.register_editEmail);
@@ -51,19 +48,38 @@ public class RegisterFragment extends Fragment {
 
         btnRegister = view.findViewById(R.id.register_btnRegister);
 
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (password.getText().toString().equals(confirmPassword.getText().toString())) {
-                    User user = new User("default", firstName.getText().toString().trim(), lastName.getText().toString().trim(), email.getText().toString().trim(), password.getText().toString().trim(), phone.getText().toString().trim());
-                    listener.onInputRegister(user);
-                } else {
-                    Toast.makeText(getActivity(), "passwords don't match", Toast.LENGTH_SHORT).show();
-                }
+        btnRegister.setOnClickListener(v -> {
+            if (password.getText().toString().equals(confirmPassword.getText().toString())) {
+                User user = new User(username.getText().toString().trim(), firstName.getText().toString().trim(), lastName.getText().toString().trim(), email.getText().toString().trim(), password.getText().toString().trim(), phone.getText().toString().trim());
+                listener.onInputRegister(user);
+            } else {
+                Toast.makeText(getActivity(), "passwords don't match", Toast.LENGTH_SHORT).show();
             }
         });
 
         btnRegister.setEnabled(false);
+
+        username.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(username.getText().toString().isEmpty() || email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
+                    btnRegister.setEnabled(false);
+                }
+                else {
+                    btnRegister.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         firstName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -73,7 +89,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
+                if(username.getText().toString().isEmpty() || email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
                     btnRegister.setEnabled(false);
                 }
                 else {
@@ -95,7 +111,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()) {
+                if(username.getText().toString().isEmpty() || email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()) {
                     btnRegister.setEnabled(false);
                 }
                 else {
@@ -117,7 +133,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
+                if(username.getText().toString().isEmpty() || email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
                     btnRegister.setEnabled(false);
                 }
                 else {
@@ -139,7 +155,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
+                if(username.getText().toString().isEmpty() || email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
                     btnRegister.setEnabled(false);
                 }
                 else {
@@ -161,7 +177,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
+                if(username.getText().toString().isEmpty() || email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
                     btnRegister.setEnabled(false);
                 }
                 else {
@@ -183,7 +199,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
+                if(username.getText().toString().isEmpty() || email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
                     btnRegister.setEnabled(false);
                 }
                 else {

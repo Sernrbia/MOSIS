@@ -14,6 +14,7 @@
     <string name="login">Log in</string>
     <string name="register">Register</string>
     <string name="phone">Phone number</string>
+    <string name="username">Username</string>
 
     <!--second screen-->
     <string name="titleActivityMainScreen">Main Screen</string>

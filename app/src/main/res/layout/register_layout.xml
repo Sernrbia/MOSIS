@@ -6,32 +6,13 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryLight">
 
-<!--    <androidx.constraintlayout.widget.Guideline-->
-<!--        android:id="@+id/horizontal_start"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:orientation="horizontal"-->
-<!--        app:layout_constraintGuide_percent="0" />-->
-
-    <ImageView
-        android:id="@+id/register_imgLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:contentDescription="@string/logo"
-        android:src="@drawable/logo"
-        app:layout_constraintHeight_percent="0.06"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/horizontal_guide2"/>
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontal_guide2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/register_imgLogo"
-        app:layout_constraintGuide_percent="0.03" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintGuide_percent="0.001" />
 
 
     <TextView
@@ -43,8 +24,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/firstName"
-        android:textSize="20sp"
-        android:layout_marginTop="10dp"/>
+        android:textSize="18sp"
+        android:layout_marginTop="6dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="0dp"
@@ -78,8 +59,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/lastName"
-        android:textSize="20sp"
-        android:layout_marginTop="10dp"/>
+        android:textSize="18sp"
+        android:layout_marginTop="6dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="0dp"
@@ -113,8 +94,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/email"
-        android:textSize="20sp"
-        android:layout_marginTop="10dp"/>
+        android:textSize="18sp"
+        android:layout_marginTop="6dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="0dp"
@@ -149,8 +130,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/password"
-        android:textSize="20sp"
-        android:layout_marginTop="10dp"/>
+        android:textSize="18sp"
+        android:layout_marginTop="6dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="0dp"
@@ -185,8 +166,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/confirmPassword"
-        android:textSize="20sp"
-        android:layout_marginTop="10dp"/>
+        android:textSize="18sp"
+        android:layout_marginTop="6dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="0dp"
@@ -221,8 +202,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/phone"
-        android:textSize="20sp"
-        android:layout_marginTop="10dp"/>
+        android:textSize="18sp"
+        android:layout_marginTop="6dp"/>
 
 
     <com.google.android.material.textfield.TextInputLayout
@@ -249,25 +230,56 @@
             app:layout_constraintRight_toRightOf="parent" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_end"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.84" />
+
+    <TextView
+        android:id="@+id/register_usernameTXT"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintWidth_percent="0.8"
+        app:layout_constraintTop_toBottomOf="@id/register_phoneLayout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:text="@string/username"
+        android:textSize="18sp"
+        android:layout_marginTop="6dp"/>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintWidth_percent="0.8"
+        app:layout_constraintTop_toBottomOf="@id/register_usernameTXT"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/register_usernameLayout"
+        app:boxBackgroundColor="@color/colorPrimaryLight"
+        android:background="@color/colorPrimaryLight"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/register_editUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:digits="0123456789+"
+            android:singleLine="true"
+            android:visibility="visible"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/register_btnRegister"
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:backgroundTint="@color/colorAccent"
         android:text="@string/register"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/horizontal_end"
+        app:layout_constraintTop_toBottomOf="@id/register_usernameLayout"
         app:layout_constraintWidth_percent="0.7" />
 
 
