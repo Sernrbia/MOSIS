@@ -17,6 +17,8 @@ import androidx.fragment.app.Fragment;
 import com.example.mosis_ispit.R;
 import com.example.mosis_ispit.addon.User;
 
+import org.jetbrains.annotations.NotNull;
+
 public class RegisterFragment extends Fragment {
 //    RegisterVM viewmodel;
     private RegisterFragmentListener listener;
@@ -25,6 +27,7 @@ public class RegisterFragment extends Fragment {
     private EditText email;
     private EditText password;
     private EditText confirmPassword;
+    private EditText phone;
     private Button btnRegister;
 //    private Animation animation;
 
@@ -44,6 +47,7 @@ public class RegisterFragment extends Fragment {
         email = view.findViewById(R.id.register_editEmail);
         password = view.findViewById(R.id.register_editPassword);
         confirmPassword = view.findViewById(R.id.register_editConfirmPassword);
+        phone = view.findViewById(R.id.register_editPhone);
 
         btnRegister = view.findViewById(R.id.register_btnRegister);
 
@@ -51,7 +55,7 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (password.getText().toString().equals(confirmPassword.getText().toString())) {
-                    User user = new User(firstName.getText().toString().trim(), lastName.getText().toString().trim(), email.getText().toString().trim(), password.getText().toString().trim());
+                    User user = new User("default", firstName.getText().toString().trim(), lastName.getText().toString().trim(), email.getText().toString().trim(), password.getText().toString().trim(), phone.getText().toString().trim());
                     listener.onInputRegister(user);
                 } else {
                     Toast.makeText(getActivity(), "passwords don't match", Toast.LENGTH_SHORT).show();
@@ -69,7 +73,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
+                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
                     btnRegister.setEnabled(false);
                 }
                 else {
@@ -91,7 +95,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
+                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()) {
                     btnRegister.setEnabled(false);
                 }
                 else {
@@ -113,7 +117,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty()){
+                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
                     btnRegister.setEnabled(false);
                 }
                 else {
@@ -135,7 +139,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty()){
+                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
                     btnRegister.setEnabled(false);
                 }
                 else {
@@ -157,7 +161,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty()){
+                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
                     btnRegister.setEnabled(false);
                 }
                 else {
@@ -171,16 +175,39 @@ public class RegisterFragment extends Fragment {
             }
         });
 
+        phone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty() || firstName.getText().toString().isEmpty() || lastName.getText().toString().isEmpty() || confirmPassword.getText().toString().isEmpty() || phone.getText().toString().isEmpty()){
+                    btnRegister.setEnabled(false);
+                }
+                else {
+                    btnRegister.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
         return view;
     }
 
     public void notification(String result) {
 //        animation.stopAnimation();
-        Toast.makeText(getActivity(), result.toString(), Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), result, Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
         if(context instanceof RegisterFragmentListener) {
             listener = (RegisterFragmentListener) context;

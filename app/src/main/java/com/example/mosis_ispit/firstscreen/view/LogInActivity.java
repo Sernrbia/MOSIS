@@ -53,8 +53,6 @@ public class LogInActivity extends AppCompatActivity implements LoginFragment.Lo
         else{
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
         }
-
-
 //        logIn.setOnClickListener(this);
     }
 
