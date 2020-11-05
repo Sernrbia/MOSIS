@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "934286565971",
+    "firebase_url": "https://mosis-ispit.firebaseio.com",
+    "project_id": "mosis-ispit",
+    "storage_bucket": "mosis-ispit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:934286565971:android:dbf251627481216ff79ca6",
+        "android_client_info": {
+          "package_name": "com.example.mosis_ispit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "934286565971-nj37n713b38a4h7aejdjanqd0bsbc283.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXLDzt2B9TjzSEhb6By1etGi-hooRHB-U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "934286565971-nj37n713b38a4h7aejdjanqd0bsbc283.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

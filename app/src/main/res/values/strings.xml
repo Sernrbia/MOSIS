@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">DiscussGo</string>
+
+    <!--first screen-->
+    <string name="navLogin">Login</string>
+    <string name="navRegister">Register</string>
+    <string name="email">E-mail</string>
+    <string name="password">Password</string>
+    <string name="confirmPassword">Confirm password</string>
+    <string name="firstName">First name</string>
+    <string name="lastName">Last name</string>
+    <string name="logo">Logo</string>
+    <string name="loading">Loading</string>
+    <string name="login">Log in</string>
+    <string name="register">Register</string>
+
+    <!--second screen-->
+    <string name="titleActivityMainScreen">Main Screen</string>
+    <string name="navSearch">Search</string>
+    <string name="navCreate">Create</string>
+    <string name="navMap">Map</string>
+    <string name="navNotifications">Notifications</string>
+    <string name="navProfile">Profile</string>
+    <string name="title_activity_main_screen">MainActivity</string>
+</resources>
