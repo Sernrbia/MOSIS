@@ -1,31 +1,21 @@
 package com.example.mosis_ispit.firstscreen.view;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.example.mosis_ispit.addon.Animation;
-import com.example.mosis_ispit.addon.TokenData;
 import com.example.mosis_ispit.addon.User;
 import com.example.mosis_ispit.firstscreen.view.fragments.LoginFragment;
 import com.example.mosis_ispit.firstscreen.view.fragments.RegisterFragment;
 import com.example.mosis_ispit.R;
-import com.example.mosis_ispit.secondscreen.view.MainScreenActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -36,8 +26,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.util.Objects;
 
 public class LogInActivity extends AppCompatActivity implements LoginFragment.LoginFragmentListener, RegisterFragment.RegisterFragmentListener {
     private Fragment selectedFragment;
@@ -50,8 +38,6 @@ public class LogInActivity extends AppCompatActivity implements LoginFragment.Lo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        TokenData.getInstance().init();
 
         auth = FirebaseAuth.getInstance();
         database= FirebaseDatabase.getInstance().getReference();
