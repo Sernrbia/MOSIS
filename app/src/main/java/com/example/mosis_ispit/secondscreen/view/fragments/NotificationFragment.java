@@ -1,4 +1,6 @@
 package com.example.mosis_ispit.secondscreen.view.fragments;
 
-public class NotificationFragment {
+import androidx.fragment.app.Fragment;
+
+public class NotificationFragment extends Fragment {
 }

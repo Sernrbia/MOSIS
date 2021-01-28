@@ -44,7 +44,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:singleLine="true"
             android:hint="@string/password"/>
-
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageView
@@ -84,12 +83,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/main_editEmail"
             android:hint="@string/email"
+            android:inputType="textEmailAddress"
             android:singleLine="true"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"/>
-
     </com.google.android.material.textfield.TextInputLayout>
-
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
@@ -103,6 +101,4 @@
         app:layout_constraintTop_toBottomOf="@id/main_horizontalBottom"
         android:backgroundTint="@color/colorAccent"
         />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

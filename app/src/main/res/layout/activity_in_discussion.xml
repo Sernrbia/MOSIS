@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".secondscreen.view.InDiscussion">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/in_discussion_layout_horizontal_guide"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintGuide_percent="0.02" />
+    <TextView
+        android:id="@+id/in_discussion_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="@string/topic"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/in_discussion_layout_horizontal_guide"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="170dp"
+        tools:layout_editor_absoluteY="41dp"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/in_discussion_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/description"
+        android:textAlignment="center"
+        android:textSize="26sp"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/in_discussion_topic" />
+
+    <TextView
+        android:id="@+id/in_discussion_owner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/owner"
+        app:layout_constraintHorizontal_bias="0.131"
+        app:layout_constraintLeft_toRightOf="@id/in_discussion_owner_label"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/in_discussion_description" />
+
+    <TextView
+        android:id="@+id/in_discussion_owner_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/discussion_started_by"
+        app:layout_constraintHorizontal_bias="0.371"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/in_discussion_description" />
+
+    <ScrollView
+        android:id="@+id/in_discussion_users_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="380dp"
+        android:clickable="true"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/in_discussion_owner"
+        android:focusable="true">
+
+        <ListView
+            android:id="@+id/in_discussion_users"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:cacheColorHint="#FFFFFF"
+            tools:ignore="NestedScrolling,ObsoleteLayoutParam"
+            tools:layout_editor_absoluteX="102dp"
+            tools:layout_editor_absoluteY="42dp" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/in_discussion_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/exit"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/in_discussion_users_wrapper"
+        app:backgroundTint="#F44336"
+        tools:layout_editor_absoluteX="159dp"
+        tools:layout_editor_absoluteY="555dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

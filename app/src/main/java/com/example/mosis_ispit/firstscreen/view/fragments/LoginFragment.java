@@ -1,7 +1,6 @@
 package com.example.mosis_ispit.firstscreen.view.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,14 +17,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mosis_ispit.addon.Animation;
 import com.example.mosis_ispit.R;
-import com.example.mosis_ispit.firstscreen.viewmodel.LogInVM;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.Map;
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 public class LoginFragment extends Fragment {
     private LoginFragmentListener listener;
@@ -50,14 +43,11 @@ public class LoginFragment extends Fragment {
 
         btnLogin = view.findViewById(R.id.main_btnLogin);
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                animation.startAnimation();
-                CharSequence us = email.getText();
-                CharSequence pass = password.getText();
-                listener.onInputLoginSent(us, pass);
-            }
+        btnLogin.setOnClickListener(v -> {
+            animation.startAnimation();
+            CharSequence us = email.getText();
+            CharSequence pass = password.getText();
+            listener.onInputLoginSent(us, pass);
         });
 
         animation = new Animation(view.findViewById(R.id.main_loading));
@@ -96,12 +86,7 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
-                    btnLogin.setEnabled(false);
-                }
-                else {
-                    btnLogin.setEnabled(true);
-                }
+                btnLogin.setEnabled(!email.getText().toString().isEmpty() && !password.getText().toString().isEmpty());
             }
 
             @Override
@@ -118,12 +103,7 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty()){
-                    btnLogin.setEnabled(false);
-                }
-                else {
-                    btnLogin.setEnabled(true);
-                }
+                btnLogin.setEnabled(!email.getText().toString().isEmpty() && !password.getText().toString().isEmpty());
             }
 
             @Override
@@ -137,11 +117,11 @@ public class LoginFragment extends Fragment {
 
     public void notification(String result) {
         animation.stopAnimation();
-        Toast.makeText(getActivity(), result.toString(), Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), result, Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NotNull Context context) {
         super.onAttach(context);
         if(context instanceof LoginFragmentListener) {
             listener = (LoginFragmentListener) context;

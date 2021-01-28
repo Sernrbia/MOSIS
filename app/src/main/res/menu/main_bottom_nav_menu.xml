@@ -2,27 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigationSearch"
-        android:title="@string/navSearch"
-        android:icon="@drawable/ic_search_24dp"/>
-
+        android:icon="@drawable/ic_search_24dp"
+        android:title="@string/navSearch"/>
     <item
         android:id="@+id/navigationCreate"
-        android:title="@string/navCreate"
-        android:icon="@drawable/ic_add_circle_outline_black_24dp"/>
-
+        android:icon="@drawable/ic_add_circle_outline_black_24dp"
+        android:title="@string/navCreate"/>
     <item
         android:id="@+id/navigationMap"
-        android:title="@string/navMap"
-        android:icon="@drawable/ic_place_24dp"/>
-
+        android:icon="@drawable/ic_place_24dp"
+        android:title="@string/navMap"/>
     <item
         android:id="@+id/navigationNotifications"
-        android:title="@string/navNotifications"
-        android:icon="@drawable/ic_notifications_black_24dp"/>
-
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/navNotifications"/>
     <item
         android:id="@+id/navigationProfile"
-        android:title="@string/navProfile"
-        android:icon="@drawable/ic_person_24dp"/>
-
+        android:icon="@drawable/ic_person_24dp"
+        android:title="@string/navProfile"/>
 </menu>

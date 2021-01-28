@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +14,6 @@
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintGuide_percent="0.001" />
-
 
     <TextView
         android:id="@+id/register_firstNameTxT"
@@ -194,49 +194,11 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/register_phoneTXT"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_editConfirmPasswordLayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="@string/phone"
-        android:textSize="18sp"
-        android:layout_marginTop="6dp"/>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_phoneTXT"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:id="@+id/register_phoneLayout"
-        app:boxBackgroundColor="@color/colorPrimaryLight"
-        android:background="@color/colorPrimaryLight"
-        >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/register_editPhone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="phone"
-            android:digits="0123456789+"
-            android:singleLine="true"
-            android:visibility="visible"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <TextView
         android:id="@+id/register_usernameTXT"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_phoneLayout"
+        app:layout_constraintTop_toBottomOf="@id/register_editConfirmPasswordLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="@string/username"
@@ -266,19 +228,77 @@
             app:layout_constraintRight_toRightOf="parent" />
     </com.google.android.material.textfield.TextInputLayout>
 
+
+    <TextView
+        android:id="@+id/register_imageTxT"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/image"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/register_usernameLayout"
+        app:layout_constraintWidth_percent="0.8" />
+
+    <ImageView
+        android:id="@+id/register_image"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/image_description"
+        android:src="@drawable/ic_person_24dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/register_usernameLayout"
+        app:layout_constraintWidth_percent="0.1" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/register_add_image"
+        android:layout_width="41dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="16dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/image_description"
+        android:src="@drawable/ic_person_24dp"
+        android:text="@string/add"
+        app:backgroundTint="@color/colorAccent"
+        app:layout_constraintHorizontal_bias="0.686"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/register_usernameLayout"
+        app:layout_constraintWidth_percent="0.1" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/register_find_image"
+        android:layout_width="71dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="16dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/image_description"
+        android:src="@drawable/ic_person_24dp"
+        android:text="@string/find"
+        app:backgroundTint="@color/colorAccent"
+        app:layout_constraintHorizontal_bias="0.889"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/register_usernameLayout"
+        app:layout_constraintWidth_percent="0.1" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/register_btnRegister"
         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="32dp"
         android:backgroundTint="@color/colorAccent"
         android:text="@string/register"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/register_usernameLayout"
-        app:layout_constraintWidth_percent="0.7" />
-
+        app:layout_constraintTop_toBottomOf="@id/register_imageTxT"
+        app:layout_constraintWidth_percent="0.7"
+        tools:targetApi="lollipop" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
