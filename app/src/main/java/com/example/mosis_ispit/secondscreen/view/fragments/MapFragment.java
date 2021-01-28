@@ -6,69 +6,51 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.mosis_ispit.R;
 import com.example.mosis_ispit.addon.Discussion;
-import com.example.mosis_ispit.addon.MyLocationListener;
-import com.example.mosis_ispit.addon.ProfileView;
+import com.example.mosis_ispit.addon.FriendRequest;
 import com.example.mosis_ispit.addon.User;
 import com.example.mosis_ispit.addon.UserPosition;
 import com.example.mosis_ispit.addon.UserStorage;
 import com.example.mosis_ispit.secondscreen.view.CreateDiscussion;
 import com.example.mosis_ispit.secondscreen.view.InDiscussion;
-import com.example.mosis_ispit.secondscreen.view.ProfileViewActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
-import org.osmdroid.events.MapListener;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -82,7 +64,7 @@ public class MapFragment extends Fragment {
     private Bitmap avatar;
     private Marker m;
     private UserPosition userPosition;
-    private MyLocationListener locationListener ;
+    private ArrayList<UserPosition> userLocations = new ArrayList<>();
     User currentUser;
     MyLocationNewOverlay myLocationOverlay = null;
 //    ArrayList<ItemizedIconOverlay> discussionsOverlay = new ArrayList<ItemizedIconOverlay>();
@@ -102,6 +84,8 @@ public class MapFragment extends Fragment {
     static final int LOCATION_PERMISSION = 5;
     static final int IN_DISCUSSION = 6;
     static final int IN_DISCUSSION_CREATOR = 7;
+    public LocationManager locationManager;
+    public MyLocationListener listener;
 
     public boolean showFriends = false;
     public boolean showDiscussions = false;
@@ -109,21 +93,15 @@ public class MapFragment extends Fragment {
 
 
     private int state = 0;
-    private boolean selCoorsEnabled = false;
-    private GeoPoint placeLoc = null;
-    private boolean selected = false;
-    private Menu menu = null;
-    Location currentLocation = null;
-    LocationManager locationManager;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_NETWORK_STATE)!= PackageManager.PERMISSION_GRANTED){
-            this.requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_NETWORK_STATE},LOCATION_PERMISSION);
-        }
+//        if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED
+//                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED
+//                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_NETWORK_STATE)!= PackageManager.PERMISSION_GRANTED){
+//            this.requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_NETWORK_STATE},LOCATION_PERMISSION);
+//        }
 
         View view = inflater.inflate(R.layout.map_layout, container, false);
         avatar = (Bitmap) this.getArguments().getParcelable("image");
@@ -133,7 +111,9 @@ public class MapFragment extends Fragment {
         String emai = (String) this.getArguments().getString("email");
         String ra = (String) this.getArguments().getString("rank");
         String po = (String) this.getArguments().getString("points");
+
         currentUser = new User(user, emai, Integer.parseInt(po), ra);
+
         storage = new UserStorage();
         discussions = new ArrayList<Discussion>();
         avatar = Bitmap.createScaledBitmap(avatar, 120, 120, true);
@@ -141,8 +121,8 @@ public class MapFragment extends Fragment {
         auth=FirebaseAuth.getInstance();
         currentUser.UID = auth.getCurrentUser().getUid();
         myMarkers = new ArrayList<Marker>();
+
         Configuration.getInstance().load(getContext(), PreferenceManager.getDefaultSharedPreferences(getContext()));
-        locationListener = new MyLocationListener();
         map = view.findViewById(R.id.map);
         noFilter = view.findViewById(R.id.map_filter_no);
         friendsFilter = view.findViewById(R.id.map_filter_friends);
@@ -182,12 +162,7 @@ public class MapFragment extends Fragment {
 //        GeoPoint startPoint = new GeoPoint(42.99806, 21.94611); // Leskovac
         mapController.setCenter(startPoint);
 //        map.setBuiltInZoomControls(true);
-//        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) locationListener);
-//        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//        if( location != null ) {
-//            currentLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
-//        }
+
         map.setMultiTouchControls(true);
         if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED
@@ -197,6 +172,23 @@ public class MapFragment extends Fragment {
         else{
             startMap();
         }
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        listener = new MyLocationListener();
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, (LocationListener) listener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+
+        database.child("usersLocations").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                showAllUsers();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase Location", error.getMessage());
+            }
+        });
+
         return view;
     }
 
@@ -222,13 +214,29 @@ public class MapFragment extends Fragment {
 //                break;
             default:
                 setMyLocationOverlay();
-                showAllUsers();
+//                showAllUsers();
                 break;
         }
     }
 
     private void showAllUsers() {
         storage.updateAllUsers();
+        map.getOverlays().clear();
+        map.getOverlays().add(myLocationOverlay);
+        userLocations = storage.getUsersLocations();
+        for (UserPosition pos : userLocations) {
+            if(!currentUser.UID.equals(pos.UID)) {
+                Marker ma = new Marker(map);
+                ma.setTextLabelFontSize(40);
+                ma.setTextIcon(pos.username);
+                //must set the icon last
+//                        m.setIcon(null);
+                ma.setVisible(true);
+                ma.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
+                // Add the overlay to the MapView
+                map.getOverlays().add(ma);
+            }
+        }
     }
 
     private void friendsView() {
@@ -296,6 +304,8 @@ public class MapFragment extends Fragment {
                         userPosition.setLatitude(myLocationOverlay.getMyLocation().getLatitude());
 
                         database.child("usersLocations").child(currentUser.UID).setValue(userPosition);
+
+                        showAllUsers();
                     }
                 });
             }
@@ -307,6 +317,7 @@ public class MapFragment extends Fragment {
         super.onPause();
         map.onPause();
         myLocationOverlay.enableMyLocation();
+        myLocationOverlay.enableFollowLocation();
     }
 
     @Override
@@ -314,6 +325,7 @@ public class MapFragment extends Fragment {
         super.onResume();
         map.onResume();
         myLocationOverlay.enableMyLocation();
+        myLocationOverlay.enableFollowLocation();
     }
 
     @Override
@@ -404,11 +416,35 @@ public class MapFragment extends Fragment {
                 map.getOverlays().remove(m);
                 userPosition.setLongitude(myLocationOverlay.getMyLocation().getLongitude());
                 userPosition.setLatitude(myLocationOverlay.getMyLocation().getLatitude());
-                database.child("usersLocations").child(currentUser.UID).setValue(userPosition);
+//                database.child("usersLocations").child(currentUser.UID).setValue(userPosition);
             }
         }
     }
 
+
+    public class MyLocationListener implements LocationListener {
+
+        public void onLocationChanged(final Location loc) {
+            Log.i("*****", "Location changed");
+            userPosition.setLongitude(loc.getLongitude());
+            userPosition.setLatitude(loc.getLatitude());
+            database.child("usersLocations").child(currentUser.UID).setValue(userPosition);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        public void onProviderDisabled(String provider) {
+            Toast.makeText(getActivity().getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
+        }
+
+
+        public void onProviderEnabled(String provider) {
+            Toast.makeText(getActivity().getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
+        }
+    }
     //    private void showFriends(){
 //        HashMap<String, UserPosition> friendMap = UserStorage.getInstance().getFriendsLocations();
 //        Collection<String> keys = friendMap.keySet();
