@@ -3,6 +3,7 @@ package com.example.mosis_ispit.addon;
 public class UserPosition {
     public String UID;
     public String username;
+    public boolean inDiscussion;
 //    public String email;
 //    public String rank;
 //    public int points;
@@ -20,13 +21,14 @@ public class UserPosition {
 //        this.latitude = latitude;
 //    }
 
-    public UserPosition(String username, double longitude, double latitude) {
+    public UserPosition(String username, double longitude, double latitude, boolean inDiscussion) {
         this.username = username;
 //        this.email = email;
 //        this.rank = rank;
 //        this.points = points;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.inDiscussion = inDiscussion;
     }
 
     public UserPosition(double lat, double lon) {

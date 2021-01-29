@@ -2,10 +2,16 @@ package com.example.mosis_ispit.secondscreen.view.fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,10 +28,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.mosis_ispit.R;
 import com.example.mosis_ispit.addon.Discussion;
+import com.example.mosis_ispit.addon.DiscussionPosition;
+import com.example.mosis_ispit.addon.DiscussionsStorage;
 import com.example.mosis_ispit.addon.FriendRequest;
 import com.example.mosis_ispit.addon.User;
 import com.example.mosis_ispit.addon.UserPosition;
@@ -51,6 +60,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -64,10 +74,13 @@ public class MapFragment extends Fragment {
     private Bitmap avatar;
     private Marker m;
     private UserPosition userPosition;
+    private DiscussionPosition discussionPosition;
     private ArrayList<UserPosition> userLocations = new ArrayList<>();
+    private DiscussionsStorage storageDiscussions;
+    private ArrayList<DiscussionPosition> discussionsLocations = new ArrayList<>();
     User currentUser;
     MyLocationNewOverlay myLocationOverlay = null;
-//    ArrayList<ItemizedIconOverlay> discussionsOverlay = new ArrayList<ItemizedIconOverlay>();
+    //    ArrayList<ItemizedIconOverlay> discussionsOverlay = new ArrayList<ItemizedIconOverlay>();
 //    ArrayList<ItemizedIconOverlay> usersOverlay = new ArrayList<ItemizedIconOverlay>();
 //    ItemizedIconOverlay discOverlay = new ItemizedIconOverlay();
     MapView map = null;
@@ -97,12 +110,6 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED
-//                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED
-//                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_NETWORK_STATE)!= PackageManager.PERMISSION_GRANTED){
-//            this.requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_NETWORK_STATE},LOCATION_PERMISSION);
-//        }
-
         View view = inflater.inflate(R.layout.map_layout, container, false);
         avatar = (Bitmap) this.getArguments().getParcelable("image");
         String user = (String) this.getArguments().getString("username");
@@ -111,14 +118,14 @@ public class MapFragment extends Fragment {
         String emai = (String) this.getArguments().getString("email");
         String ra = (String) this.getArguments().getString("rank");
         String po = (String) this.getArguments().getString("points");
-
         currentUser = new User(user, emai, Integer.parseInt(po), ra);
 
         storage = new UserStorage();
+        storageDiscussions = new DiscussionsStorage();
         discussions = new ArrayList<Discussion>();
         avatar = Bitmap.createScaledBitmap(avatar, 120, 120, true);
-        database= FirebaseDatabase.getInstance().getReference();
-        auth=FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance().getReference();
+        auth = FirebaseAuth.getInstance();
         currentUser.UID = auth.getCurrentUser().getUid();
         myMarkers = new ArrayList<Marker>();
 
@@ -147,11 +154,7 @@ public class MapFragment extends Fragment {
         });
 
         createDiscussion.setOnClickListener(v -> {
-//            Bundle bundle = new Bundle();
             Intent intentDisc = new Intent(getActivity(), CreateDiscussion.class);
-//            bundle.putSerializable("user",clickedFriend);
-//            intent.putExtras(bundle);
-//            startActivity(intent);
             startActivityForResult(intentDisc, CREATE_DISCUSSION);
         });
 
@@ -161,26 +164,46 @@ public class MapFragment extends Fragment {
         GeoPoint startPoint = new GeoPoint(43.3209, 21.8958); // Nis
 //        GeoPoint startPoint = new GeoPoint(42.99806, 21.94611); // Leskovac
         mapController.setCenter(startPoint);
-//        map.setBuiltInZoomControls(true);
 
-        map.setMultiTouchControls(true);
-        if(ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_NETWORK_STATE)!= PackageManager.PERMISSION_GRANTED){
-            this.requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_NETWORK_STATE},LOCATION_PERMISSION);
-        }
-        else{
-            startMap();
-        }
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        listener = new MyLocationListener();
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, (LocationListener) listener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+//        database.child("usersLocations").addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                updateMarkers();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Log.e("Firebase Location", error.getMessage());
+//            }
+//        });
 
         database.child("usersLocations").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                showAllUsers();
+                Log.i("*****", "Location changed VALUE EVENT LISTENER");
+                if (snapshot.getValue(UserPosition.class) != null) {
+                    UserPosition pos = snapshot.getValue(UserPosition.class);
+                    if(pos != null) {
+                        if (pos.UID != null) {
+                            boolean found = false;
+                            if (userLocations.size() > 0) {
+                                for(UserPosition up : userLocations) {
+                                    if (up.UID.equals(pos.UID)) {
+                                        up.setLatitude(pos.getLatitude());
+                                        up.setLongitude(pos.getLongitude());
+                                        found = true;
+                                    }
+                                }
+                                if (!found) {
+                                    userLocations.add(pos);
+                                }
+                            } else {
+                                userLocations.add(pos);
+                            }
+                        }
+                    }
+                }
+                updateMarkers();
             }
 
             @Override
@@ -189,12 +212,125 @@ public class MapFragment extends Fragment {
             }
         });
 
+        database.child("userLocations").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.i("*****", "Location changed onChildAdded");
+                if (dataSnapshot.getValue(UserPosition.class) != null) {
+                    UserPosition pos = dataSnapshot.getValue(UserPosition.class);
+                    if (pos != null) {
+                        if (pos.UID != null) {
+                            boolean found = false;
+                            if (userLocations.size() > 0) {
+                                for(UserPosition up : userLocations) {
+                                    if (up.UID.equals(pos.UID)) {
+                                        up.setLatitude(pos.getLatitude());
+                                        up.setLongitude(pos.getLongitude());
+                                        found = true;
+                                    }
+                                }
+                                if (!found) {
+                                    userLocations.add(pos);
+                                }
+                            } else {
+                                userLocations.add(pos);
+                            }
+                        }
+                    }
+                }
+                updateMarkers();
+            }
+
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.i("*****", "Location changed onChildChanged");
+                if (dataSnapshot.getValue(UserPosition.class) != null) {
+                    UserPosition pos = dataSnapshot.getValue(UserPosition.class);
+                    if (pos != null) {
+                        if (pos.UID != null) {
+                            boolean found = false;
+                            if (userLocations.size() > 0) {
+                                for(UserPosition up : userLocations) {
+                                    if (up.UID.equals(pos.UID)) {
+                                        up.setLatitude(pos.getLatitude());
+                                        up.setLongitude(pos.getLongitude());
+                                        found = true;
+                                    }
+                                }
+                                if (!found) {
+                                    userLocations.add(pos);
+                                }
+                            } else {
+                                userLocations.add(pos);
+                            }
+                            updateMarkers();
+                        }
+                    }
+                }
+                updateMarkers();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+//        database.child("discussionsLocations").addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { updateMarkers(); }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { updateMarkers(); }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) { updateMarkers(); }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+        map.setMultiTouchControls(true);
+        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE}, LOCATION_PERMISSION);
+        } else {
+            locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+            listener = new MyLocationListener();
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, (LocationListener) listener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+
+            startMap();
+        }
         return view;
     }
 
-    @SuppressLint("Missing Permissions")
+    @SuppressLint({"Missing Permissions", "MissingPermission"})
     @Override
-    public void onRequestPermissionsResult(int reqCode,String permissions[],int[] grantedResults ){
+    public void onRequestPermissionsResult(int reqCode, String permissions[], int[] grantedResults) {
+        locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
+        listener = new MyLocationListener();
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, (LocationListener) listener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+
         startMap();
     }
 
@@ -202,7 +338,7 @@ public class MapFragment extends Fragment {
         switch (state){
             case SHOW_FRIENDS :
                 setMyLocationOverlay();
-                friendsView();
+//                friendsView();
                 break;
 //            case SHOW_MAP :
 //                setMyLocationOverlay();
@@ -214,82 +350,86 @@ public class MapFragment extends Fragment {
 //                break;
             default:
                 setMyLocationOverlay();
-//                showAllUsers();
+//                updateMarkers();
                 break;
         }
     }
 
-    private void showAllUsers() {
-        storage.updateAllUsers();
-        map.getOverlays().clear();
-        map.getOverlays().add(myLocationOverlay);
-        userLocations = storage.getUsersLocations();
-        for (UserPosition pos : userLocations) {
-            if(!currentUser.UID.equals(pos.UID)) {
-                Marker ma = new Marker(map);
-                ma.setTextLabelFontSize(40);
-                ma.setTextIcon(pos.username);
-                //must set the icon last
-//                        m.setIcon(null);
-                ma.setVisible(true);
-                ma.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
-                // Add the overlay to the MapView
-                map.getOverlays().add(ma);
+    public BitmapDrawable writeOnDrawable(int drawableId, String text){
+        Bitmap bm = BitmapFactory.decodeResource(requireActivity().getResources(), drawableId).copy(Bitmap.Config.ARGB_8888, true);
+
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(60);
+
+        Canvas canvas = new Canvas(bm);
+        canvas.drawText(text, 0, bm.getHeight()/2, paint);
+
+        return new BitmapDrawable(requireActivity().getResources(), bm);
+    }
+
+    private void updateMarkers() {
+        requireActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (UserPosition pos : userLocations) {
+                if(!currentUser.UID.equals(pos.UID)) {
+                    if(!pos.inDiscussion) {
+                        Marker ma = new Marker(map);
+                        ma.setIcon(ContextCompat.getDrawable(requireContext(),R.drawable.ic_person_24dp));
+                        ma.setVisible(true);
+                        ma.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
+                        map.getOverlays().add(ma);
+
+                        Marker m = new Marker(map);
+                        m.setTextLabelFontSize(48);
+                        m.setTextLabelBackgroundColor(Color.rgb(255, 255, 200));
+                        m.setTextIcon(pos.username);
+                        m.setVisible(true);
+                        m.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
+                        map.getOverlays().add(m);
+                    }
+                }
             }
-        }
-    }
 
-    private void friendsView() {
-//        HashMap<String, UserPosition> friendMap = UserStorage.getInstance().getFriendsLocations();
-//        Collection<String> keys = friendMap.keySet();
-//        final Object[] arr = keys.toArray();
+//        discussionsLocations = storageDiscussions.getAllDiscussions();
+//        for (DiscussionPosition posDis : discussionsLocations) {
+//            Marker ma = new Marker(map);
+//            ma.setIcon(ContextCompat.getDrawable(requireContext(),R.drawable.round_explore_black_24dp));
+//            ma.setVisible(true);
+//            ma.setPosition(new GeoPoint(posDis.getLatitude(), posDis.getLongitude()));
+//            map.getOverlays().add(ma);
 //
-//        if(myPlacesOverlay!=null)
-//            map.getOverlays().remove(myPlacesOverlay);
-//        final ArrayList<OverlayItem> overlayArrayList = new ArrayList<>();
-//        for (Object o : arr) {
-//            UserPosition userLocation = friendMap.get(o);
-//            OverlayItem overlayItem = new OverlayItem("Item title", "Item snippet", new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude()));
-//            overlayItem.setMarker(new BitmapDrawable(getResources(), UserStorage.getInstance().friendImages.get(o)));
-//            overlayArrayList.add(overlayItem);
+//            Marker m = new Marker(map);
+//            m.setTextLabelFontSize(40);
+//            m.setTextIcon(posDis.topic);
+//            m.setVisible(true);
+//            m.setPosition(new GeoPoint(posDis.getLatitude(), posDis.getLongitude()));
+//            map.getOverlays().add(m);
 //        }
-//
-//        myPlacesOverlay = new ItemizedIconOverlay<>(overlayArrayList, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-//            @Override
-//            public boolean onItemSingleTapUp(int index, OverlayItem item) {
-//                User clickedFriend = UserStorage.getInstance().getFriend(arr[index].toString());
-//                Bundle bundle = new Bundle();
-//                Intent intent = new Intent(getActivity(), ProfileViewActivity.class);
-//                bundle.putSerializable("user",clickedFriend);
-//                intent.putExtras(bundle);
-////                startActivity(intent);
-//                startActivityForResult(intent, PROFILE_VIEW);
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onItemLongPress(int index, OverlayItem item) {
-//                return false;
-//            }
-//        },getContext());
-//        this.map.getOverlays().add(myPlacesOverlay);
+                map.getOverlays().add(myLocationOverlay);
+            }
+        });
+//        storage.updateAllUsers();
+////        storageDiscussions.resetListeners();
+//        map.getOverlays().clear();
+//        userLocations = storage.getUsersLocations();
+
     }
 
-    private void updateMap(){
-//        map.
-    }
     private void setMyLocationOverlay(){
-        getActivity().runOnUiThread(new Runnable() {
+        requireActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mapController.setZoom(15.0);
-                myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(getActivity()), map);
+                myLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(requireActivity()), map);
                 myLocationOverlay.enableMyLocation();
                 myLocationOverlay.enableFollowLocation();
                 myLocationOverlay.setDrawAccuracyEnabled(true);
                 myLocationOverlay.setPersonIcon(avatar);
                 map.getOverlays().add(0, myLocationOverlay);
-                userPosition = new UserPosition(currentUser.getUsername(), 43.3209, 21.8958);
+                userPosition = new UserPosition(currentUser.getUsername(), 43.3209, 21.8958, false);
                 userPosition.UID = currentUser.UID;
                 myLocationOverlay.runOnFirstFix(new Runnable() {
                     @Override
@@ -305,7 +445,7 @@ public class MapFragment extends Fragment {
 
                         database.child("usersLocations").child(currentUser.UID).setValue(userPosition);
 
-                        showAllUsers();
+                        updateMarkers();
                     }
                 });
             }
@@ -338,85 +478,27 @@ public class MapFragment extends Fragment {
                 String size = data.getStringExtra("size");
                 Discussion newDisc = new Discussion(topic, description, myLocationOverlay.getMyLocation().getLongitude(), myLocationOverlay.getMyLocation().getLatitude(), java.text.DateFormat.getDateTimeInstance().format(new Date()), Boolean.parseBoolean(type), Integer.parseInt(size), currentUser);
                 newDisc.key = database.push().getKey();
-
+                discussionPosition = new DiscussionPosition(topic, myLocationOverlay.getMyLocation().getLongitude(), myLocationOverlay.getMyLocation().getLatitude());
                 database.child(FIREBASE_DISCUSSION).child(newDisc.key).child("data").setValue(newDisc);
                 database.child(FIREBASE_DISCUSSION).child(newDisc.key).child("users").child(currentUser.UID).setValue(currentUser.getUsername());
-
+                database.child("activeDiscussions").child(newDisc.key).setValue(discussionPosition);
+                userPosition.inDiscussion = true;
+                database.child("usersLocations").child(currentUser.UID).child("inDiscussion").setValue(true);
+                database.child("activeDiscussions").child(newDisc.key).setValue(discussionPosition);
                 discussions.add(newDisc);
-                myLocationOverlay.disableMyLocation();
-                myLocationOverlay.disableFollowLocation();
-                map.getOverlays().remove(myLocationOverlay);
-
-                m = new Marker(map);
-                m.setTextLabelFontSize(40);
-                m.setTextIcon(newDisc.getTopic());
-                //must set the icon last
-//                        m.setIcon(null);
-                m.setVisible(true);
-                m.setPosition(new GeoPoint(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLongitude()));
-                // Add the overlay to the MapView
-                map.getOverlays().add(m);
-
-                // -----------------------------------------------
 
                 Intent intent = new Intent(getActivity(), InDiscussion.class);
                 intent.putExtra("discussion", newDisc);
                 intent.putExtra("requestCode", "CREATE_DISCUSSION");
                 intent.putExtra("user", currentUser);
                 startActivityForResult(intent, IN_DISCUSSION_CREATOR);
-//                database.child("users").child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-//                    @SuppressLint("SetTextI18n")
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        User user_data = dataSnapshot.getValue(User.class);
-//                        String topic = data.getStringExtra("topic");
-//                        String description = data.getStringExtra("description");
-//                        String type = data.getStringExtra("type");
-//                        String size = data.getStringExtra("size");
-//                        Discussion newDisc = new Discussion(topic, description, myLocationOverlay.getMyLocation().getLongitude(), myLocationOverlay.getMyLocation().getLatitude(), java.text.DateFormat.getDateTimeInstance().format(new Date()), Boolean.parseBoolean(type), Integer.parseInt(size), user_data);
-//                        newDisc.key = database.push().getKey();
-//
-//                        database.child(FIREBASE_DISCUSSION).child(newDisc.key).setValue(newDisc);
-//
-//                        discussions.add(newDisc);
-//                        myLocationOverlay.disableMyLocation();
-//                        myLocationOverlay.disableFollowLocation();
-//                        map.getOverlays().remove(myLocationOverlay);
-//
-//                        m = new Marker(map);
-//                        m.setTextLabelFontSize(40);
-//                        m.setTextIcon(newDisc.getTopic());
-//                        //must set the icon last
-////                        m.setIcon(null);
-//                        m.setVisible(true);
-//                        m.setPosition(new GeoPoint(myLocationOverlay.getMyLocation().getLatitude(), myLocationOverlay.getMyLocation().getLongitude()));
-//                        // Add the overlay to the MapView
-//                        map.getOverlays().add(m);
-//
-//                        // -----------------------------------------------
-//
-//                        Intent intent = new Intent(getActivity(), InDiscussion.class);
-//                        intent.putExtra("discussion", newDisc);
-//                        intent.putExtra("requestCode", "CREATE_DISCUSSION");
-//                        intent.putExtra("user", user_data);
-//                        startActivityForResult(intent, IN_DISCUSSION_CREATOR);
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
             }
         } else if (requestCode == IN_DISCUSSION_CREATOR) {
             if (resultCode == RESULT_OK) {
-                myLocationOverlay.enableMyLocation();
-                myLocationOverlay.enableFollowLocation();
-                map.getOverlays().add(myLocationOverlay);
-                map.getOverlays().remove(m);
+                userPosition.inDiscussion = false;
+                database.child("usersLocations").child(currentUser.UID).child("inDiscussion").setValue(false);
                 userPosition.setLongitude(myLocationOverlay.getMyLocation().getLongitude());
                 userPosition.setLatitude(myLocationOverlay.getMyLocation().getLatitude());
-//                database.child("usersLocations").child(currentUser.UID).setValue(userPosition);
             }
         }
     }
@@ -437,93 +519,12 @@ public class MapFragment extends Fragment {
         }
 
         public void onProviderDisabled(String provider) {
-            Toast.makeText(getActivity().getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity().getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
         }
 
 
         public void onProviderEnabled(String provider) {
-            Toast.makeText(getActivity().getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity().getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
         }
     }
-    //    private void showFriends(){
-//        HashMap<String, UserPosition> friendMap = UserStorage.getInstance().getFriendsLocations();
-//        Collection<String> keys = friendMap.keySet();
-//        final Object[] niz = keys.toArray();
-//
-//        if(myPlacesOverlay!=null)
-//            map.getOverlays().remove(myPlacesOverlay);
-//        final ArrayList<OverlayItem> overlayArrayList = new ArrayList<>();
-//        for(int i = 0; i<niz.length;i++){
-//            UserPosition userLocation = friendMap.get(niz[i]);
-//            OverlayItem overlayItem = new OverlayItem("AAAA","BBBB",new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude()));
-//            overlayItem.setMarker(new BitmapDrawable(getResources(),UserStorage.getInstance().friendImages.get(niz[i])));
-//            overlayArrayList.add(overlayItem);
-//        }
-//
-//        myPlacesOverlay = new ItemizedIconOverlay<>(overlayArrayList, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-//            @Override
-//            public boolean onItemSingleTapUp(int index, OverlayItem item) {
-//                User clickedFriend = UserStorage.getInstance().getFriend(niz[index].toString());
-//                Bundle bundle = new Bundle();
-//                Intent intent = new Intent(getActivity(), ProfileView.class);
-//                bundle.putSerializable("user",clickedFriend);
-//                intent.putExtras(bundle);
-//                startActivity(intent);
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onItemLongPress(int index, OverlayItem item) {
-//                return false;
-//            }
-//        },getApplicationContext());
-//        getActivity().map.getOverlays().add(myPlacesOverlay);
-//    }
-//
-//    private void prikaziSveTokene() {
-//        if(myPlacesOverlay!=null)
-//            map.getOverlays().remove(myPlacesOverlay);
-//        final ArrayList<OverlayItem> overlayArrayList = new ArrayList<>();
-//        for(int i = 0; i<MyTokensData.getInstance().myTokens.size();i++){
-//            Token token = MyTokensData.getInstance().getToken(i);
-//            OverlayItem overlayItem = new OverlayItem(token.tokenIntensity.toString(),token.tokenType.toString(),new GeoPoint(token.getLatitude(),token.getLongitude()));
-//            overlayItem.setMarker(getActivity().getResources().getDrawable(getTokenImage(token)));
-//            overlayArrayList.add(overlayItem);
-//            if(MyTokensData.getInstance().currentLocation == null){
-//                double a = calculateDistanceBetweenTwoGeoPoints(21.8958,43.3209,token.getLongitude(),token.getLatitude());
-//                token.setDistance(a);
-//            }
-//            else{
-//                double a = calculateDistanceBetweenTwoGeoPoints(MyTokensData.getInstance().currentLocation.getLongitude(),MyTokensData.getInstance().currentLocation.getLatitude(),token.getLongitude(),token.getLatitude());
-//                token.setDistance(a);
-//            }
-//        }
-//
-//        myPlacesOverlay = new ItemizedIconOverlay<>(overlayArrayList, new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-//            @Override
-//            public boolean onItemSingleTapUp(int index, OverlayItem item) {
-//                Token token=MyTokensData.getInstance().getToken(index);
-//                Bundle bundle = new Bundle();
-//                Intent intent = new Intent(getActivity(), ViewToken.class);
-//                bundle.putSerializable("token",token);
-//                intent.putExtras(bundle);
-//                startActivity(intent);
-//                return false;
-//            }
-//            @Override
-//            public boolean onItemLongPress(int index, OverlayItem item) {
-//                Token token=MyTokensData.getInstance().getToken(index);
-//                if(token.distance<=1300 && !token.getUserId().equals(auth.getCurrentUser().getUid())){
-//                    Bundle bundle = new Bundle();
-//                    Intent intent = new Intent(getActivity(), CollectTokenActivity.class);
-//                    bundle.putSerializable("token",token);
-//                    intent.putExtras(bundle);
-//                    finish();
-//                    startActivity(intent);
-//                }
-//                return false;
-//            }
-//        },getApplicationContext());
-//        getActivity().map.getOverlays().add(myPlacesOverlay);
-//    }
 }

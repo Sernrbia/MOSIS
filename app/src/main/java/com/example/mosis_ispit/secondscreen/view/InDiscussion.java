@@ -107,6 +107,7 @@ public class InDiscussion extends AppCompatActivity {
 //            });
             end.setOnClickListener(v -> {
                 discussion.active = false;
+                myref.child("activeDiscussions").child(discussion.key).removeValue();
                 myref.child("discussions/" + discussion.key + "/data/active").setValue(discussion.active);
                 Intent data = new Intent();
                 setResult(RESULT_OK, data);

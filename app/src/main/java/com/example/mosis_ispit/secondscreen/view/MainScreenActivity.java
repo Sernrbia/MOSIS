@@ -105,13 +105,13 @@ public class MainScreenActivity extends AppCompatActivity implements ProfileInfo
                     selectedFragment = new ProfileFragment();
                     break;
             }
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    selectedFragment.setArguments(b);
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
-                }
-            });
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+                selectedFragment.setArguments(b);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).addToBackStack(null).commit();
+//                }
+//            });
             return true;
         }
     };
