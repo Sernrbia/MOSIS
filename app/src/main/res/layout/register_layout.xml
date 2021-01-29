@@ -13,25 +13,25 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintGuide_percent="0.001" />
+        app:layout_constraintGuide_percent="0.1" />
 
-    <TextView
-        android:id="@+id/register_firstNameTxT"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/horizontal_guide2"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="@string/firstName"
-        android:textSize="18sp"
-        android:layout_marginTop="6dp"/>
+<!--    <TextView-->
+<!--        android:id="@+id/register_firstNameTxT"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintWidth_percent="0.8"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/horizontal_guide2"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:text="@string/firstName"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginTop="6dp"/>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_firstNameTxT"
+        app:layout_constraintTop_toBottomOf="@id/horizontal_guide2"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/register_editFirstNameLayout"
@@ -44,29 +44,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
+            android:hint="@string/firstName"
             android:visibility="visible"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
-    <TextView
-        android:id="@+id/register_lastNameTxT"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_editFirstNameLayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="@string/lastName"
-        android:textSize="18sp"
-        android:layout_marginTop="6dp"/>
+<!--    <TextView-->
+<!--        android:id="@+id/register_lastNameTxT"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintWidth_percent="0.8"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/register_editFirstNameLayout"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:text="@string/lastName"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginTop="6dp"/>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_lastNameTxT"
+        app:layout_constraintTop_toBottomOf="@id/register_editFirstNameLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/register_editLastNameLayout"
@@ -81,27 +81,28 @@
             android:singleLine="true"
             android:visibility="visible"
             app:layout_constraintLeft_toLeftOf="parent"
+            android:hint="@string/lastName"
             app:layout_constraintRight_toRightOf="parent" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
-    <TextView
-        android:id="@+id/register_usernameTxT"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_editLastNameLayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="@string/email"
-        android:textSize="18sp"
-        android:layout_marginTop="6dp"/>
+<!--    <TextView-->
+<!--        android:id="@+id/register_usernameTxT"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintWidth_percent="0.8"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/register_editLastNameLayout"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:text="@string/email"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginTop="6dp"/>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_usernameTxT"
+        app:layout_constraintTop_toBottomOf="@id/register_editLastNameLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/register_editUsernameLayout"
@@ -116,28 +117,29 @@
             android:singleLine="true"
             android:inputType="textEmailAddress"
             android:visibility="visible"
+            android:hint="@string/email"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
-    <TextView
-        android:id="@+id/register_passwordTxT"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_editUsernameLayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="@string/password"
-        android:textSize="18sp"
-        android:layout_marginTop="6dp"/>
+<!--    <TextView-->
+<!--        android:id="@+id/register_passwordTxT"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintWidth_percent="0.8"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/register_editUsernameLayout"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:text="@string/password"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginTop="6dp"/>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_passwordTxT"
+        app:layout_constraintTop_toBottomOf="@id/register_editLastNameLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/register_editPasswordLayout"
@@ -150,6 +152,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
+            android:hint="@string/password"
             android:singleLine="true"
             android:visibility="visible"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -157,23 +160,23 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
-    <TextView
-        android:id="@+id/register_confirmPasswordTxT"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_editPasswordLayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="@string/confirmPassword"
-        android:textSize="18sp"
-        android:layout_marginTop="6dp"/>
+<!--    <TextView-->
+<!--        android:id="@+id/register_confirmPasswordTxT"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintWidth_percent="0.8"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/register_editPasswordLayout"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:text="@string/confirmPassword"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginTop="6dp"/>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_confirmPasswordTxT"
+        app:layout_constraintTop_toBottomOf="@id/register_editPasswordLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/register_editConfirmPasswordLayout"
@@ -188,29 +191,29 @@
             android:inputType="textPassword"
             android:singleLine="true"
             android:visibility="visible"
+            android:hint="@string/confirmPassword"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/register_usernameTXT"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_editConfirmPasswordLayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="@string/username"
-        android:textSize="18sp"
-        android:layout_marginTop="6dp"/>
-
+<!--    <TextView-->
+<!--        android:id="@+id/register_usernameTXT"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintWidth_percent="0.8"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/register_editConfirmPasswordLayout"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:text="@string/username"-->
+<!--        android:textSize="18sp"-->
+<!--        android:layout_marginTop="6dp"/>-->
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintTop_toBottomOf="@id/register_usernameTXT"
+        app:layout_constraintTop_toBottomOf="@id/register_editConfirmPasswordLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/register_usernameLayout"
@@ -224,6 +227,7 @@
             android:layout_height="wrap_content"
             android:singleLine="true"
             android:visibility="visible"
+            android:hint="@string/username"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
     </com.google.android.material.textfield.TextInputLayout>

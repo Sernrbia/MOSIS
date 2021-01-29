@@ -65,46 +65,10 @@ public class InDiscussion extends AppCompatActivity {
             discussion.getOwner().setPoints(discussion.getOwner().getPoints() + 20);
             myref.child("discussions/" + discussion.key + "/data/owner/points").setValue(discussion.getOwner().getPoints());
             myref.child("discussions/" + discussion.key + "/data/owner/rank").setValue(discussion.getOwner().getRank());
-//            discussion.getOwner().discussions.add(discussion);
-//            discussion.getOwner().discussionsHistory.add(discussion);
             myref.child("users/" + discussion.getOwner().UID + "/data/points").setValue(discussion.getOwner().getPoints());
             myref.child("users/" + discussion.getOwner().UID + "/data/rank").setValue(discussion.getOwner().getRank());
             Discussion disc = new Discussion(discussion.getTopic(), discussion.getDescription(), discussion.getLongitude(), discussion.getLatitude(), discussion.isOpen());
             myref.child("users/" + discussion.getOwner().UID + "/discussions/" + discussion.key).setValue(discussion.getTopic());
-//            myref.child("users/" + discussion.getOwner().UID).addValueEventListener(new ValueEventListener() {
-//                @SuppressLint("SetTextI18n")
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                    User user_data = dataSnapshot.getValue(User.class);
-//                    if (user_data.discussions != null && user_data.discussionsHistory != null) {
-//                        user_data.discussions.add(discussion);
-//                        user_data.discussionsHistory.add(discussion);
-//                    } else if (user_data.discussionsHistory != null) {
-//                        ArrayList<Discussion> discussions = new ArrayList<Discussion>();
-//                        discussions.add(discussion);
-//                        user_data.discussions = discussions;
-//                        user_data.discussionsHistory.add(discussion);
-//                    } else if (user_data.discussions != null) {
-//                        ArrayList<Discussion> discussions = new ArrayList<Discussion>();
-//                        discussions.add(discussion);
-//                        user_data.discussions.add(discussion);
-//                        user_data.discussionsHistory = discussions;
-//                    } else {
-//                        ArrayList<Discussion> discussions = new ArrayList<Discussion>();
-//                        discussions.add(discussion);
-//                        user_data.discussions = discussions;
-//                        user_data.discussionsHistory = discussions;
-//                    }
-//
-//                    myref.child("users/" + discussion.getOwner().UID + "/discussions").setValue(discussion);
-//                    myref.child("users/" + discussion.getOwner().UID + "/discussionsHistory").setValue(discussion);
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                }
-//            });
             end.setOnClickListener(v -> {
                 discussion.active = false;
                 myref.child("discussions/" + discussion.key + "/data/active").setValue(discussion.active);

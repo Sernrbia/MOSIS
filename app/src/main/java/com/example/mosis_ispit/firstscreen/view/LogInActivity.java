@@ -154,7 +154,21 @@ public class LogInActivity extends AppCompatActivity implements LoginFragment.Lo
 
         activeUser = auth.getCurrentUser();
         if (activeUser != null) {
-            activeUser = null;
+            Intent i = new Intent(LogInActivity.this, MainScreenActivity.class);
+            startActivity(i);
+            finish();
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        activeUser = auth.getCurrentUser();
+        if (activeUser != null) {
+            Intent i = new Intent(LogInActivity.this, MainScreenActivity.class);
+            startActivity(i);
+            finish();
+        }
+    }
+
 }

@@ -59,7 +59,10 @@ public class MainScreenActivity extends AppCompatActivity implements ProfileInfo
     private Fragment selectedFragment;
     private BottomNavigationView navView;
     private OnGetDataListener listener;
+    private
+
     static final int LOCATION_PERMISSION = 1;
+
     Bundle b;
     FirebaseAuth auth;
     DatabaseReference database;
@@ -177,7 +180,12 @@ public class MainScreenActivity extends AppCompatActivity implements ProfileInfo
                             selectedFragment = new MapFragment();
                         }
                         selectedFragment.setArguments(b);
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+                            }
+                        });
                     }
                 });
             }
