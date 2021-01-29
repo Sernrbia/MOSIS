@@ -1,10 +1,14 @@
 package com.example.mosis_ispit.secondscreen.view;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 //import com.example.discussgo.R;
@@ -37,6 +41,7 @@ import com.google.firebase.storage.StorageReference;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -54,8 +59,8 @@ public class MainScreenActivity extends AppCompatActivity implements ProfileInfo
     private Fragment selectedFragment;
     private BottomNavigationView navView;
     private OnGetDataListener listener;
+    static final int LOCATION_PERMISSION = 1;
     Bundle b;
-//    private TextView mTextMessage;
     FirebaseAuth auth;
     DatabaseReference database;
     StorageReference storage;
@@ -74,6 +79,23 @@ public class MainScreenActivity extends AppCompatActivity implements ProfileInfo
         b = new Bundle();
         listener = (OnGetDataListener) this;
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_NETWORK_STATE},LOCATION_PERMISSION);
+        } else {
+            storage.child("users").child(Objects.requireNonNull(auth.getCurrentUser()).getUid()).child("profile_img").getBytes(100*MB).addOnCompleteListener(new OnCompleteListener<byte[]>() {
+                @Override
+                public void onComplete(@NonNull Task<byte[]> task) {
+                    byte[] data = task.getResult();
+                    listener.imageRetrieved(data);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int reqCode, String permissions[], int[] grantedResults) {
         storage.child("users").child(Objects.requireNonNull(auth.getCurrentUser()).getUid()).child("profile_img").getBytes(100*MB).addOnCompleteListener(new OnCompleteListener<byte[]>() {
             @Override
             public void onComplete(@NonNull Task<byte[]> task) {
@@ -139,88 +161,7 @@ public class MainScreenActivity extends AppCompatActivity implements ProfileInfo
                     @Override
                     public void run() {
                         User user_data = dataSnapshot.getValue(User.class);
-//                        String e = "";
-//                        String f = "";
-//                        String l = "";
-//                        String p = "";
-//                        long po = 0;
-//                        String ra = "";
-//                        String us = "";
-//                        for (DataSnapshot resultSnapshot: dataSnapshot.getChildren()) {
-//                            if (resultSnapshot.getKey().equals("email")) {
-//                                e = (String) resultSnapshot.getValue();
-//                            } else if (resultSnapshot.getKey().equals("firstName")) {
-//                                f = (String) resultSnapshot.getValue();
-//                            } else if (resultSnapshot.getKey().equals("lastName")) {
-//                                l = (String) resultSnapshot.getValue();
-//                            } else if (resultSnapshot.getKey().equals("password")) {
-//                                p = (String) resultSnapshot.getValue();
-//                            } else if (resultSnapshot.getKey().equals("points")) {
-//                                po = (Long) resultSnapshot.getValue();
-//                            } else if (resultSnapshot.getKey().equals("rank")) {
-//                                ra = (String) resultSnapshot.getValue();
-//                            } else if (resultSnapshot.getKey().equals("username")) {
-//                                us = (String) resultSnapshot.getValue();
-//                            } else if (resultSnapshot.getKey().equals("discussions")) {
-//                                ArrayList<User> userss = new ArrayList<User>();
-//                                boolean active = false;
-//                                String desc;
-//                                String top;
-//                                double latit;
-//                                double longi;
-//                                boolean ope;
-//                                for (DataSnapshot resultSnapshot2 : dataSnapshot.child("discussions").getChildren()) {
-//                                    Log.d("SNAPSHOT", resultSnapshot2.toString());
-////                            if (resultSnapshot.getKey().equals("email")) {
-////                                email = (String) resultSnapshot.getValue();
-////                            } else if (resultSnapshot.getKey().equals("firstName")) {
-////                                firstName = (String) resultSnapshot.getValue();
-////                            } else if (resultSnapshot.getKey().equals("lastName")) {
-////                                lastName = (String) resultSnapshot.getValue();
-////                            } else if (resultSnapshot.getKey().equals("password")) {
-////                                password = (String) resultSnapshot.getValue();
-////                            } else if (resultSnapshot.getKey().equals("points")) {
-////                                points = (int) resultSnapshot.getValue();
-////                            } else if (resultSnapshot.getKey().equals("rank")) {
-////                                rank = (String) resultSnapshot.getValue();
-////                            } else if (resultSnapshot.getKey().equals("username")) {
-////                                username = (String) resultSnapshot.getValue();
-////                            }
-//                                }
-//                            } else if (resultSnapshot.getKey().equals("discussionsHistory")) {
-//
-//                            }
-//                        }
-//                        User user_data = new User(us, f, l, e, p, (int) po, ra);
-//                        user_data.UID = auth.getCurrentUser().getUid();
-//                        HashMap<String, Discussion> discus = new HashMap<String, Discussion>();
-//                        for (DataSnapshot resultSnapshot: dataSnapshot.child("discussions").getChildren()) {
-//                            Log.d("SNAPSHOT", resultSnapshot.toString());
-////                            if (resultSnapshot.getKey().equals("email")) {
-////                                email = (String) resultSnapshot.getValue();
-////                            } else if (resultSnapshot.getKey().equals("firstName")) {
-////                                firstName = (String) resultSnapshot.getValue();
-////                            } else if (resultSnapshot.getKey().equals("lastName")) {
-////                                lastName = (String) resultSnapshot.getValue();
-////                            } else if (resultSnapshot.getKey().equals("password")) {
-////                                password = (String) resultSnapshot.getValue();
-////                            } else if (resultSnapshot.getKey().equals("points")) {
-////                                points = (int) resultSnapshot.getValue();
-////                            } else if (resultSnapshot.getKey().equals("rank")) {
-////                                rank = (String) resultSnapshot.getValue();
-////                            } else if (resultSnapshot.getKey().equals("username")) {
-////                                username = (String) resultSnapshot.getValue();
-////                            }
-//                        }
-//                        username = user_data.getUsername();
-//                        fullname = user_data.FullName();
-//                        email = user_data.getEmail();
-//                        rank = user_data.getRank()+"";
-//                        points = user_data.getPoints()+"";
-//                        friends = ""+user_data.friends.size();
-//                        discussions = ""+user_data.discussions.size();
-//                        tokensPlaced.setText(user_data.tokensPlaced+"");
-//                        friendsNumber.setText((user_data.friends.size()-1)+"");
+
                         b.putParcelable("image", avatar);
                         b.putString("username", user_data.getUsername());
                         b.putString("fullname", user_data.FullName());
@@ -232,7 +173,6 @@ public class MainScreenActivity extends AppCompatActivity implements ProfileInfo
                         b.putString("friends", ""+user_data.friends.size());
                         b.putString("discussions", ""+user_data.discussions.size());
                         if (selectedFragment == null) {
-                            // your fragment code
                             navView.getMenu().getItem(2).setChecked(true);
                             selectedFragment = new MapFragment();
                         }
@@ -260,5 +200,17 @@ public class MainScreenActivity extends AppCompatActivity implements ProfileInfo
     protected void onSaveInstanceState(@NotNull Bundle InstanceState) {
         super.onSaveInstanceState(InstanceState);
         InstanceState.clear();
+    }
+
+    @Override
+    public void onAttachFragment(@NonNull Fragment fragment) {
+        super.onAttachFragment(fragment);
+        Log.d("MapFragmentLifecycle", "Activity: onAttachFragment");
+    }
+
+    @Override
+    public void onAttachFragment(android.app.Fragment fragment) {
+        super.onAttachFragment(fragment);
+        Log.d("MapFragmentLifecycle", "Activity: onAttachFragment 2");
     }
 }
