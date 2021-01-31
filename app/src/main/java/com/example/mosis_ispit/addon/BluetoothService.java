@@ -20,7 +20,7 @@ import java.util.UUID;
 public class BluetoothService {
     private static final String TAG = "BluetoothService";
     private static final String appName = "DISCUSSGO";
-    private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66"); // address over which user connect
+    private static final UUID MY_UUID_INSECURE = UUID.fromString("78e80aa8-cc53-41ef-86ef-ee50d815733b"); // address over which user connect
     private final BluetoothAdapter mBluetoothAdapter;
     public Context mContext;
     private AcceptThread mInsecureAcceptThread;

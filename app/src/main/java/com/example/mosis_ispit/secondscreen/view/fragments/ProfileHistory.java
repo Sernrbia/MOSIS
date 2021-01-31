@@ -8,17 +8,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mosis_ispit.R;
 import com.example.mosis_ispit.addon.DiscussionHistoryAdapter;
-import com.example.mosis_ispit.addon.InDiscussionAdapter;
-import com.example.mosis_ispit.addon.User;
-import com.example.mosis_ispit.secondscreen.view.InDiscussion;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,14 +30,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileHistory extends Fragment {
-    FirebaseAuth auth;
+    private FirebaseAuth auth;
     private TextView discussions;
     private ListView list;
     private DatabaseReference myref;
-    FirebaseDatabase database;
     public DiscussionHistoryAdapter mInDiscussionAdapter;
+    public ArrayAdapter<String> discussionsList;
 //    public static ProfileHistory mainActivity;
     public Activity a;
+    public ValueEventListener profileHistoryListener;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -48,9 +48,47 @@ public class ProfileHistory extends Fragment {
 
         discussions = view.findViewById(R.id.profile_history_count);
         list = view.findViewById(R.id.profile_history_list);
-//        mainActivity = getContext();
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        myref = database.getReference();
+        auth=FirebaseAuth.getInstance();
+        profileHistoryListener = new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                try {
+                    ArrayList<String> us = new ArrayList<String>();
+                    HashMap<String, HashMap<String, String>> o = (HashMap<String, HashMap<String, String>>) dataSnapshot.getValue();
+                    if (o != null) {
+                        for (Map.Entry disc : o.entrySet()) {
+                            us.add((String) disc.getValue());
+                        }
+
+                        mInDiscussionAdapter = new DiscussionHistoryAdapter(getContext(), R.layout.profile_history_view, us);
+                        list.setAdapter(mInDiscussionAdapter);
+
+                        discussions.setText(String.valueOf(us.size()));
+                    } else {
+                        discussions.setText("0");
+                    }
+                } catch(Exception e) {
+                    Log.e("Profile history", e.getMessage());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("The read failed: ", databaseError.getMessage());
+            }
+        };
+
+        myref.child("users").child(auth.getCurrentUser().getUid()).child("discussions").addValueEventListener(profileHistoryListener);
     }
 
     @Override
@@ -58,40 +96,6 @@ public class ProfileHistory extends Fragment {
         super.onAttach(context);
         if (context instanceof Activity){
             a = (Activity) context;
-            database = FirebaseDatabase.getInstance();
-            myref = database.getReference();
-            auth=FirebaseAuth.getInstance();
-            myref.child("users").child(auth.getCurrentUser().getUid()).child("discussions").addValueEventListener(new ValueEventListener() {
-                @SuppressLint("SetTextI18n")
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    a.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ArrayList<String> us = new ArrayList<String>();
-                            HashMap<String, HashMap<String, String>> o = (HashMap<String, HashMap<String, String>>) dataSnapshot.getValue();
-                            if (o != null) {
-                                for (Map.Entry disc : o.entrySet()) {
-                                    us.add((String) disc.getValue());
-                                }
-                                for (String discussion : us) {
-                                    mInDiscussionAdapter = new DiscussionHistoryAdapter(getContext(), R.layout.profile_history_view, us);
-                                    list.setAdapter(mInDiscussionAdapter);
-                                }
-
-                                discussions.setText(String.valueOf(us.size()));
-                            } else {
-                                discussions.setText("0");
-                            }
-                        }
-                    });
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.e("The read failed: ", databaseError.getMessage());
-                }
-            });
         }
     }
 
@@ -99,5 +103,9 @@ public class ProfileHistory extends Fragment {
     public void onDetach() {
         super.onDetach();
         a = null;
+        myref.child("users").child(auth.getCurrentUser().getUid()).child("discussions").removeEventListener(profileHistoryListener);
+        mInDiscussionAdapter = null;
+        profileHistoryListener = null;
+        list.setAdapter(null);
     }
 }

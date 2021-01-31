@@ -39,7 +39,15 @@
     <ListView
         android:id="@+id/profile_friends_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/profile_friends_label"
-        />
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.8"
+        android:layout_weight="3"
+        android:cacheColorHint="#FFFFFF"
+        tools:ignore="NestedScrolling,ObsoleteLayoutParam"
+        tools:layout_editor_absoluteX="102dp"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_friends_count"
+        tools:layout_editor_absoluteY="42dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

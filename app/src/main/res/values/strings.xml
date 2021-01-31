@@ -28,7 +28,7 @@
     <string name="navProfile">Profile</string>
     <string name="title_activity_main_screen">MainActivity</string>
     <string name="number_of_discussions">Number of discussions: </string>
-    <string name="count">count</string>
+    <string name="count">0</string>
     <string name="points_info">points_info</string>
     <string name="rank_level">rank_level</string>
     <string name="profile_name">profile_name</string>
@@ -54,7 +54,7 @@
     <string name="edit_text_preview">Edit text preview</string>
     <string name="discussion_topic">Discussion topic</string>
     <string name="status">Status</string>
-    <string name="description_optional">Description (optional)</string>
+    <string name="description_optional">Description</string>
     <string name="create">Create</string>
     <string name="close">Close</string>
     <string name="public_create">Public</string>
@@ -65,4 +65,17 @@
     <string name="discussion_started_by">Discussion started by:</string>
     <string name="owner">Owner</string>
     <string name="exit">End discussion</string>
+    <string name="discussionHistory">discussion</string>
+    <string name="navRanking">Ranking</string>
+    <string name="discuss_go_rankings">Discuss Go rankings</string>
+    <string name="zeroHistory">0</string>
+    <string name="join">Join</string>
+    <string name="notifications_label">Notifications</string>
+    <string name="accept_notification">Accept</string>
+    <string name="deny_notification">Deny</string>
+    <string name="notificationId">notification</string>
+    <string name="friendView">friend</string>
+    <string name="size">Size</string>
+    <string name="exit_join">Exit</string>
+    <string name="status_join">Status</string>
 </resources>

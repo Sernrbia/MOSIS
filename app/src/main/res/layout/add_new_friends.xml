@@ -4,26 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <ScrollView
-        android:id="@+id/scroll"
+
+    <ListView
+        android:id="@+id/add_new_friends_list"
         android:layout_width="match_parent"
-        android:layout_height="480dp"
-        android:clickable="true"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.68"
+        android:layout_weight="3"
+        android:cacheColorHint="#FFFFFF"
+        tools:ignore="NestedScrolling,ObsoleteLayoutParam"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_new_friends_refresh">
-
-        <ListView
-            android:id="@+id/add_new_friends_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:cacheColorHint="#FFFFFF"
-            tools:ignore="NestedScrolling,ObsoleteLayoutParam"
-            tools:layout_editor_absoluteX="102dp"
-            tools:layout_editor_absoluteY="42dp" />
-    </ScrollView>
+        app:layout_constraintTop_toBottomOf="@+id/add_new_friends_refresh"
+        tools:layout_editor_absoluteX="102dp"
+        tools:layout_editor_absoluteY="42dp" />
 
     <Button
         android:id="@+id/add_new_friends_add"
@@ -46,7 +40,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/scroll" />
+        app:layout_constraintTop_toBottomOf="@id/add_new_friends_list" />
 
     <Button
         android:id="@+id/add_new_friends_refresh"

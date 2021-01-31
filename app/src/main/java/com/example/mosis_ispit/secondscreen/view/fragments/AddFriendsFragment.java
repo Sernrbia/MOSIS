@@ -2,6 +2,7 @@ package com.example.mosis_ispit.secondscreen.view.fragments;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -21,6 +22,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.mosis_ispit.R;
@@ -39,12 +42,14 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class CreateFragment extends Fragment {
+public class AddFriendsFragment extends Fragment {
+    private Activity activity;
+    private String username;
     private ListView users;
     private Button add, send, refresh;
     private BluetoothService bluetoothService;
     private BluetoothAdapter mBluetoothAdapter;
-    private static final UUID MY_UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+    private static final UUID MY_UUID = UUID.fromString("78e80aa8-cc53-41ef-86ef-ee50d815733b");
     public BluetoothDevice mBTDevice;
     public ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
     public AddFriendsAdapter mAddFriendListAdapter;
@@ -72,6 +77,15 @@ public class CreateFragment extends Fragment {
         send = view.findViewById(R.id.add_new_friends_send);
         refresh = view.findViewById(R.id.add_new_friends_refresh);
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+        username = (String) this.getArguments().getString("username");
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         users.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -134,19 +148,43 @@ public class CreateFragment extends Fragment {
                 getActivity().registerReceiver(mBroadcastReceiver3, discoverDevices);
             }
         });
+    }
 
-        return view;
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        activity = (Activity) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        activity = null;
+
+        try {
+            getActivity().unregisterReceiver(mBroadcastReceiver1);
+            getActivity().unregisterReceiver(mBroadcastReceiver2);
+            getActivity().unregisterReceiver(mBroadcastReceiver3);
+            getActivity().unregisterReceiver(mBroadcastReceiver4);
+        }
+        catch (Exception e){}
+
+        mBluetoothAdapter.cancelDiscovery();
+        mBluetoothAdapter.disable();
+        IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        getActivity().registerReceiver(mBroadcastReceiver1, BTIntent);
     }
 
     private void addFriend() {
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
-        databaseReference.child(friendID).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        databaseReference.child(friendID).child("notifications").child(mCurrentUser.getUid()).setValue(username);
+        databaseReference.child(friendID).child("data").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
 
                 if(user != null) {
-                    Toast.makeText(getActivity(), "User " + user.getUsername() + " is added to your friends!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Friend request has been sent to " + user.getUsername() + "!", Toast.LENGTH_SHORT).show();
                     databaseReference.child(mCurrentUser.getUid()).child("friends").child(friendID).setValue(user);
                 } else
                     Toast.makeText(getActivity(), "Error adding friend. Please try again.", Toast.LENGTH_SHORT).show();
@@ -166,23 +204,23 @@ public class CreateFragment extends Fragment {
         bluetoothService.startClient(device, uuid);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        try {
-            getActivity().unregisterReceiver(mBroadcastReceiver1);
-            getActivity().unregisterReceiver(mBroadcastReceiver2);
-            getActivity().unregisterReceiver(mBroadcastReceiver3);
-            getActivity().unregisterReceiver(mBroadcastReceiver4);
-        }
-        catch (Exception e){}
-
-        mBluetoothAdapter.cancelDiscovery();
-        mBluetoothAdapter.disable();
-        IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-        getActivity().registerReceiver(mBroadcastReceiver1, BTIntent);
-    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//
+//        try {
+//            getActivity().unregisterReceiver(mBroadcastReceiver1);
+//            getActivity().unregisterReceiver(mBroadcastReceiver2);
+//            getActivity().unregisterReceiver(mBroadcastReceiver3);
+//            getActivity().unregisterReceiver(mBroadcastReceiver4);
+//        }
+//        catch (Exception e){}
+//
+//        mBluetoothAdapter.cancelDiscovery();
+//        mBluetoothAdapter.disable();
+//        IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+//        getActivity().registerReceiver(mBroadcastReceiver1, BTIntent);
+//    }
 
     @TargetApi(Build.VERSION_CODES.M)
     private void checkBTPermissions() {
@@ -190,9 +228,9 @@ public class CreateFragment extends Fragment {
             int permissionCheck = getContext().checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
             permissionCheck += getContext().checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
             if (permissionCheck != 0) {
-                this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001); //Any number
+                this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
             }
-        }else{
+        } else{
             Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
         }
     }

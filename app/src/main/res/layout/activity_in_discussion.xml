@@ -64,27 +64,19 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/in_discussion_description" />
 
-    <ScrollView
-        android:id="@+id/in_discussion_users_wrapper"
+    <ListView
+        android:id="@+id/in_discussion_users"
         android:layout_width="match_parent"
-        android:layout_height="380dp"
-        android:clickable="true"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.6"
+        android:layout_weight="3"
+        android:cacheColorHint="#FFFFFF"
+        tools:ignore="NestedScrolling,ObsoleteLayoutParam"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/in_discussion_owner"
-        android:focusable="true">
-
-        <ListView
-            android:id="@+id/in_discussion_users"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:cacheColorHint="#FFFFFF"
-            tools:ignore="NestedScrolling,ObsoleteLayoutParam"
-            tools:layout_editor_absoluteX="102dp"
-            tools:layout_editor_absoluteY="42dp" />
-    </ScrollView>
+        tools:layout_editor_absoluteX="102dp"
+        tools:layout_editor_absoluteY="42dp" />
 
     <Button
         android:id="@+id/in_discussion_end"
@@ -93,7 +85,7 @@
         android:text="@string/exit"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/in_discussion_users_wrapper"
+        app:layout_constraintTop_toBottomOf="@id/in_discussion_users"
         app:backgroundTint="#F44336"
         tools:layout_editor_absoluteX="159dp"
         tools:layout_editor_absoluteY="555dp" />

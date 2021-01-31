@@ -5,7 +5,7 @@ public class UserPosition {
     public String username;
     public double longitude;
     public double latitude;
-    public boolean inDiscussion;
+//    public boolean inDiscussion;
 
     public UserPosition(){
     }
@@ -16,17 +16,17 @@ public class UserPosition {
         this.latitude = latitude;
     }
 
-    public UserPosition(String username, double longitude, double latitude, boolean inDiscussion) {
-        this.username = username;
-        this.longitude = longitude;
-        this.latitude = latitude;
-        this.inDiscussion = inDiscussion;
-    }
+//    public UserPosition(String username, double longitude, double latitude, boolean inDiscussion) {
+//        this.username = username;
+//        this.longitude = longitude;
+//        this.latitude = latitude;
+//        this.inDiscussion = inDiscussion;
+//    }
 
-    public UserPosition(double lat, double lon) {
-        this.latitude = lat;
-        this.longitude = lon;
-    }
+//    public UserPosition(double lat, double lon) {
+//        this.latitude = lat;
+//        this.longitude = lon;
+//    }
 
     public double getLatitude() {
         return latitude;

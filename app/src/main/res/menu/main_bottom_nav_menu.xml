@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigationSearch"
-        android:icon="@drawable/ic_search_24dp"
-        android:title="@string/navSearch"/>
+        android:icon="@drawable/rank"
+        android:title="@string/navRanking"/>
     <item
         android:id="@+id/navigationCreate"
         android:icon="@drawable/ic_add_circle_outline_black_24dp"

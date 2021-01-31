@@ -13,9 +13,9 @@ import com.example.mosis_ispit.R;
 import java.util.ArrayList;
 
 public class DiscussionHistoryAdapter extends ArrayAdapter<String> {
-    private LayoutInflater mLayoutInflater;
-    private ArrayList<String> mDiscussions;
-    private int  mViewResourceId;
+    private final LayoutInflater mLayoutInflater;
+    private final ArrayList<String> mDiscussions;
+    private final int  mViewResourceId;
 
     public DiscussionHistoryAdapter(Context context, int discussionId, ArrayList<String> discussion){
         super(context, discussionId, discussion);
@@ -31,7 +31,7 @@ public class DiscussionHistoryAdapter extends ArrayAdapter<String> {
         String discussion = mDiscussions.get(position);
 
         if (discussion != null) {
-            TextView userName = (TextView) convertView.findViewById(R.id.userUsername);
+            TextView userName = (TextView) convertView.findViewById(R.id.userUsernameHistory);
 
             if (userName != null) {
                 userName.setText(discussion);

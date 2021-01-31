@@ -31,6 +31,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mosis_ispit"
         tools:ignore="AllowBackup">
+        <activity android:name=".secondscreen.view.InDiscussionJoin"
+            android:label="InDiscussionJoin"
+            android:theme="@style/AppTheme.ActionBar" />
         <activity android:name=".secondscreen.view.InDiscussion"
             android:label="InDiscussion"
             android:theme="@style/AppTheme.ActionBar" />

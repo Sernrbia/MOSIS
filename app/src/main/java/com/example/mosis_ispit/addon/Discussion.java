@@ -4,17 +4,16 @@ import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Discussion implements Serializable {
     private String topic;
     private String description;
     private double longitude;
     private double latitude;
-    private int maxUsers;
+    public int maxUsers;
     private String start;
-    private boolean open;
-    private User owner;
+    private String owner;
+    public String ownerUsername;
     public ArrayList<User> users;
     public boolean active;
     @Exclude
@@ -24,40 +23,25 @@ public class Discussion implements Serializable {
         users = new ArrayList<User>();
     }
 
-    public Discussion(String t, String d, double lon, double lat, boolean o) {
+    public Discussion(String t, String d, double lon, double lat) {
         this.topic = t;
         this.description = d;
         this.longitude = lon;
         this.latitude = lat;
-        this.open = o;
     }
 
-    public Discussion(String t, String d, double lon, double lat, String s, boolean o, int maxUsers, User owner) {
+    public Discussion(String t, String d, double lon, double lat, String s, int maxUsers, String owner, String ownerUsername) {
         this.topic = t;
         this.description = d;
         this.longitude = lon;
         this.latitude = lat;
         this.start = s;
-        this.open = o;
-        this.owner = owner;
         this.maxUsers = Math.min(maxUsers, 20);
         this.maxUsers = Math.max(this.maxUsers, 3);
-        users = new ArrayList<User>();
-//        users.add(owner);
-        this.active = true;
-    }
-
-    public Discussion(boolean active, String d, double lat, double lon, boolean o, User owner, String s, String t, int maxUsers, ArrayList<User> users) {
-        this.topic = t;
-        this.description = d;
-        this.longitude = lon;
-        this.latitude = lat;
-        this.start = s;
-        this.open = o;
         this.owner = owner;
-        this.maxUsers = maxUsers;
-        this.users = users;
-        this.active = active;
+        this.ownerUsername = ownerUsername;
+        users = new ArrayList<>();
+        this.active = true;
     }
 
     public String getTopic() {
@@ -100,19 +84,11 @@ public class Discussion implements Serializable {
         this.start = start;
     }
 
-    public boolean isOpen() {
-        return open;
-    }
-
-    public void setOpen(boolean open) {
-        this.open = open;
-    }
-
-    public User getOwner() {
+    public String getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(String owner) {
         this.owner = owner;
     }
 
