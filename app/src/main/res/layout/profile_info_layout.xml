@@ -25,7 +25,7 @@
             android:layout_width="212dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="username"
+            android:text="@string/username_info"
             android:textSize="20sp" />
 
         <TextView
@@ -33,7 +33,7 @@
             android:layout_width="212dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="email"
+            android:text="@string/email_info"
             android:textSize="20sp" />
 
         <TextView
@@ -74,8 +74,7 @@
             android:id="@+id/profile_view_close"
             android:layout_width="228dp"
             android:layout_height="wrap_content"
-            android:text="close"
+            android:text="@string/close_info"
             app:backgroundTint="#009688" />
-
     </LinearLayout>
 </ScrollView>

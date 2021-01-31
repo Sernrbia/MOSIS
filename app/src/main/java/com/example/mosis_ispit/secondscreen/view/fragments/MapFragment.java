@@ -394,18 +394,7 @@ public class MapFragment extends Fragment {
                         ma.setIcon(ContextCompat.getDrawable(requireContext(),R.drawable.ic_person_24dp));
                         ma.setVisible(true);
                         ma.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
-                        map.getOverlays().add(ma);
-
-                        Marker m = new Marker(map);
-                        m.setTextLabelFontSize(58);
-                        m.setTextLabelBackgroundColor(Color.rgb(255, 255, 200));
-                        m.setTextIcon(pos.username);
-                        m.setVisible(true);
-                        m.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
-                        map.getOverlays().add(m);
-                        m.setId(pos.UID);
-                        m.setSnippet(pos.username);
-                        m.setOnMarkerClickListener((marker, mapView) -> {
+                        ma.setOnMarkerClickListener((marker, mapView) -> {
                             double valueLatitude = marker.getPosition().getLatitude() - myLocationOverlay.getMyLocation().getLatitude();
                             double valueLongitude = marker.getPosition().getLongitude() - myLocationOverlay.getMyLocation().getLongitude();
                             Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
@@ -419,6 +408,18 @@ public class MapFragment extends Fragment {
                             }
                             return true;
                         });
+                        map.getOverlays().add(ma);
+
+                        Marker m = new Marker(map);
+                        m.setTextLabelFontSize(58);
+                        m.setTextLabelBackgroundColor(Color.rgb(255, 255, 200));
+                        m.setTextIcon(pos.username);
+                        m.setVisible(true);
+                        m.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
+                        m.setId(pos.UID);
+                        m.setTitle(pos.username);
+                        m.setSnippet(pos.UID);
+                        map.getOverlays().add(m);
                     }
                 }
             }
@@ -438,6 +439,9 @@ public class MapFragment extends Fragment {
                 ma.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
                 ma.setIcon(displayFriendImage);
                 ma.setImage(displayFriendImage);
+                ma.setId(pos.UID);
+                ma.setTitle(pos.username);
+                ma.setSnippet(pos.UID);
                 map.getOverlays().add(ma);
 //                                ma.setOnMarkerClickListener((marker, mapView) -> {
 //                                    double valueLatitude = marker.getPosition().getLatitude() - myLocationOverlay.getMyLocation().getLatitude();
@@ -458,11 +462,12 @@ public class MapFragment extends Fragment {
                 m.setTextLabelFontSize(58);
                 m.setTextLabelBackgroundColor(Color.rgb(255, 255, 200));
                 m.setTextIcon(pos.username);
-                ma.setId(pos.UID);
-                ma.setTitle(pos.username);
-                ma.setSnippet(pos.UID);
                 m.setVisible(true);
                 m.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
+                m.setId(pos.UID);
+                m.setTitle(pos.username);
+                m.setSnippet(pos.UID);
+                m.setImage(displayFriendImage);
                 map.getOverlays().add(m);
             }
         });
@@ -547,31 +552,35 @@ public class MapFragment extends Fragment {
         switch(requestCode) {
             case CREATE_DISCUSSION:
                 if (resultCode == RESULT_OK) {
-                    String topic = data.getStringExtra("topic");
-                    String description = data.getStringExtra("description");
-                    String size = data.getStringExtra("size");
-                    Discussion newDisc = new Discussion(topic, description, myLocationOverlay.getMyLocation().getLongitude(), myLocationOverlay.getMyLocation().getLatitude(), java.text.DateFormat.getDateTimeInstance().format(new Date()), Integer.parseInt(size), currentUser.UID, currentUser.getUsername());
-                    newDisc.key = database.push().getKey();
-                    discussionPosition = new DiscussionPosition(topic, description, currentUser.getUsername(), myLocationOverlay.getMyLocation().getLongitude(), myLocationOverlay.getMyLocation().getLatitude(), newDisc.maxUsers);
-                    discussionPosition.key = newDisc.key;
+                    try {
+                        String topic = data.getStringExtra("topic");
+                        String description = data.getStringExtra("description");
+                        String size = data.getStringExtra("size");
+                        Discussion newDisc = new Discussion(topic, description, myLocationOverlay.getMyLocation().getLongitude(), myLocationOverlay.getMyLocation().getLatitude(), java.text.DateFormat.getDateTimeInstance().format(new Date()), Integer.parseInt(size), currentUser.UID, currentUser.getUsername());
+                        newDisc.key = database.push().getKey();
+                        discussionPosition = new DiscussionPosition(topic, description, currentUser.getUsername(), myLocationOverlay.getMyLocation().getLongitude(), myLocationOverlay.getMyLocation().getLatitude(), newDisc.maxUsers);
+                        discussionPosition.key = newDisc.key;
 
-                    database.child(FIREBASE_DISCUSSION).child(newDisc.key).child("data").setValue(newDisc);
-                    UserOwner owner = new UserOwner(currentUser.getUsername(), currentUser.getPoints(), currentUser.getRank(), newDisc.active, newDisc.getTopic());
-                    owner.UID = currentUser.UID;
-                    database.child(FIREBASE_DISCUSSION).child(newDisc.key).child("owner").setValue(owner);
-                    database.child(FIREBASE_DISCUSSION).child(newDisc.key).child("users").child(currentUser.UID).setValue(currentUser.getUsername());
-                    database.child("discussionsLocations").child(discussionPosition.key).setValue(discussionPosition);
+                        database.child(FIREBASE_DISCUSSION).child(newDisc.key).child("data").setValue(newDisc);
+                        UserOwner owner = new UserOwner(currentUser.getUsername(), currentUser.getPoints(), currentUser.getRank(), newDisc.active, newDisc.getTopic());
+                        owner.UID = currentUser.UID;
+                        database.child(FIREBASE_DISCUSSION).child(newDisc.key).child("owner").setValue(owner);
+                        database.child(FIREBASE_DISCUSSION).child(newDisc.key).child("users").child(currentUser.UID).setValue(currentUser.getUsername());
+                        database.child("discussionsLocations").child(discussionPosition.key).setValue(discussionPosition);
 
-                    myLocationOverlay.disableMyLocation();
-                    myLocationOverlay.disableFollowLocation();
+                        myLocationOverlay.disableMyLocation();
+                        myLocationOverlay.disableFollowLocation();
 
-                    database.child("usersLocations").child(currentUser.UID).setValue(userPosition);
+                        database.child("usersLocations").child(currentUser.UID).setValue(userPosition);
 
-                    Intent intent = new Intent(activity, InDiscussion.class);
-                    intent.putExtra("discussion", newDisc);
-                    intent.putExtra("requestCode", "CREATE_DISCUSSION");
-                    intent.putExtra("user", currentUser);
-                    startActivityForResult(intent, IN_DISCUSSION_CREATOR);
+                        Intent intent = new Intent(activity, InDiscussion.class);
+                        intent.putExtra("discussion", newDisc);
+                        intent.putExtra("requestCode", "CREATE_DISCUSSION");
+                        intent.putExtra("user", currentUser);
+                        startActivityForResult(intent, IN_DISCUSSION_CREATOR);
+                    } catch(Exception e) {
+                        Log.d("Feature", e.getMessage());
+                    }
                 }
                 break;
             case IN_DISCUSSION_CREATOR:

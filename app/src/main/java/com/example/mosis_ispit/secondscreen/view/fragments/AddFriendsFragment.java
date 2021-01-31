@@ -76,7 +76,8 @@ public class AddFriendsFragment extends Fragment {
         add = view.findViewById(R.id.add_new_friends_add);
         send = view.findViewById(R.id.add_new_friends_send);
         refresh = view.findViewById(R.id.add_new_friends_refresh);
-
+        send.setEnabled(false);
+        add.setEnabled(false);
         return view;
     }
 
@@ -99,6 +100,7 @@ public class AddFriendsFragment extends Fragment {
                     mBTDevice = mBTDevices.get(i);
                     bluetoothService = new BluetoothService(getActivity());
                 }
+                send.setEnabled(true);
                 startConnection();
             }
         });

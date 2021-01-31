@@ -78,4 +78,7 @@
     <string name="size">Size</string>
     <string name="exit_join">Exit</string>
     <string name="status_join">Status</string>
+    <string name="close_info">close</string>
+    <string name="username_info">username</string>
+    <string name="email_info">email</string>
 </resources>

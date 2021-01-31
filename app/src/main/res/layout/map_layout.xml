@@ -7,8 +7,10 @@
 
     <Button
         android:id="@+id/map_filter_friends"
-        android:layout_width="75dp"
-        android:layout_height="46dp"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.3"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.06"
         android:text="@string/only_friends"
         android:textSize="10sp"
         app:backgroundTint="#009688"
@@ -22,8 +24,10 @@
 
     <Button
         android:id="@+id/map_filter_no"
-        android:layout_width="79dp"
-        android:layout_height="46dp"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.3"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.06"
         android:layout_marginTop="8dp"
         android:text="@string/remove_filter"
         android:textSize="10sp"
@@ -36,8 +40,10 @@
 
     <Button
         android:id="@+id/map_create_discussion"
-        android:layout_width="115dp"
-        android:layout_height="44dp"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.3"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.06"
         android:layout_marginTop="10dp"
         android:text="@string/create_discussion"
         android:textSize="10sp"

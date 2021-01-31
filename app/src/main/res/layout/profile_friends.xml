@@ -40,7 +40,7 @@
         android:id="@+id/profile_friends_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.8"
+        app:layout_constraintHeight_percent="0.9"
         android:layout_weight="3"
         android:cacheColorHint="#FFFFFF"
         tools:ignore="NestedScrolling,ObsoleteLayoutParam"
