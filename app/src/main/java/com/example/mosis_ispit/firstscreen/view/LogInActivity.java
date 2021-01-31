@@ -92,13 +92,6 @@ public class LogInActivity extends AppCompatActivity implements LoginFragment.Lo
                         if (task.isSuccessful()) {
                             Intent i = new Intent(LogInActivity.this, MainScreenActivity.class);
                             activeUser = auth.getCurrentUser();
-                            String uid = activeUser.getUid();
-//                            MyTokensData.getInstance().init();
-//                            AllUsersData.getInstance().resetListeners();
-//                            Intent i1= new Intent(LogInActivity.this, LocationService.class);
-//                            LogInActivity.this.startService(i1);
-//                            Intent i = new Intent(LogInActivity.this, Map.class);
-//                            i.putExtra("state", Map.SHOW_MAP);
                             ((LoginFragment) selectedFragment).notification("Authentication success");
                             startActivity(i);
                             finish();
@@ -154,6 +147,7 @@ public class LogInActivity extends AppCompatActivity implements LoginFragment.Lo
 
         activeUser = auth.getCurrentUser();
         if (activeUser != null) {
+//            activeUser = null;
             Intent i = new Intent(LogInActivity.this, MainScreenActivity.class);
             startActivity(i);
             finish();
@@ -165,6 +159,7 @@ public class LogInActivity extends AppCompatActivity implements LoginFragment.Lo
         super.onResume();
         activeUser = auth.getCurrentUser();
         if (activeUser != null) {
+//            activeUser = null;
             Intent i = new Intent(LogInActivity.this, MainScreenActivity.class);
             startActivity(i);
             finish();

@@ -45,7 +45,7 @@
     <string name="logout">Logout</string>
     <string name="only_friends">Only friends</string>
     <string name="all_discussions">All discussions</string>
-    <string name="remove_filter">Remove filter</string>
+    <string name="remove_filter">Show all users</string>
     <string name="user">USER</string>
     <string name="send_request">SEND REQUEST</string>
     <string name="refresh">REFRESH</string>

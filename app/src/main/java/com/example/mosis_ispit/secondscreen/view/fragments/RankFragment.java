@@ -42,7 +42,9 @@ public class RankFragment extends Fragment {
     private DatabaseReference myref;
 
     private ListView usersRanking;
+
     private ArrayList<UserForComparison> users;
+
     private RankingAdapter mRankAdapter;
     private ValueEventListener rankingListener;
 
@@ -59,8 +61,6 @@ public class RankFragment extends Fragment {
 
         usersRanking = view.findViewById(R.id.ranking_layout_users);
 
-//        mRankAdapter = new DiscussionHistoryAdapter(getContext(), R.layout.profile_history_view, us);
-//        usersRanking.setAdapter(mRankAdapter);
         return view;
     }
 
@@ -76,6 +76,8 @@ public class RankFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 try {
+                    users.clear();
+
                     for (DataSnapshot us : dataSnapshot.getChildren()) {
                         for (DataSnapshot u : us.getChildren()) {
                             if (u.getKey().equals("data")) {
@@ -88,8 +90,10 @@ public class RankFragment extends Fragment {
 
                     Collections.sort(users);
 
-                    mRankAdapter = new RankingAdapter(getContext(), R.layout.profile_history_view, users);
-                    usersRanking.setAdapter(mRankAdapter);
+                    if (users.size() > 0) {
+                        mRankAdapter = new RankingAdapter(getContext(), R.layout.profile_history_view, users);
+                        usersRanking.setAdapter(mRankAdapter);
+                    }
                 } catch(Exception e) {
                     Log.e("Rank listener", e.getMessage());
                 }

@@ -31,20 +31,6 @@
         app:layout_constraintHorizontal_bias="0.951"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/map_filter_discussions"
-        tools:ignore="SmallSp" />
-
-    <Button
-        android:id="@+id/map_filter_discussions"
-        android:layout_width="104dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/all_discussions"
-        android:textSize="10sp"
-        app:backgroundTint="#009688"
-        app:layout_constraintHorizontal_bias="0.948"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/map_filter_friends"
         tools:ignore="SmallSp" />
 
@@ -63,12 +49,12 @@
         app:layout_constraintTop_toBottomOf="@+id/map_filter_no"
         tools:ignore="SmallSp" />
 
-        <org.osmdroid.views.MapView
-            android:id="@+id/map"
-            tilesource="Map"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="40dp"
-            tools:layout_editor_absoluteY="0dp" />
+    <org.osmdroid.views.MapView
+        android:id="@+id/map"
+        tilesource="Map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
