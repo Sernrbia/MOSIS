@@ -128,15 +128,12 @@ public class AddFriendsFragment extends Fragment {
             }
         });
 
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                friendID = bluetoothService.getFriendId();
-                if(friendID != null)
-                    addFriend();
-                else
-                    Toast.makeText(getActivity(), "Input stream error, please try again", Toast.LENGTH_SHORT).show();
-            }
+        add.setOnClickListener(v -> {
+            friendID = bluetoothService.getFriendId();
+            if(friendID != null)
+                addFriend();
+            else
+                Toast.makeText(getActivity(), "Input stream error, please try again", Toast.LENGTH_SHORT).show();
         });
 
         refresh.setOnClickListener(s -> {
@@ -187,22 +184,6 @@ public class AddFriendsFragment extends Fragment {
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
         databaseReference.child(friendID).child("notifications").child(mCurrentUser.getUid()).setValue(username);
         Toast.makeText(getActivity(), "Your request has been sent to " + friendID + "!", Toast.LENGTH_SHORT).show();
-//        databaseReference.child(mCurrentUser.getUid()).child("friends").child(friendID).setValue(username);
-//        databaseReference.child(friendID).child("data").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                User user = dataSnapshot.getValue(User.class);
-//
-//                if(user != null) {
-//                    databaseReference.child(mCurrentUser.getUid()).child("friends").child(friendID).setValue(user.getUsername());
-//                    Toast.makeText(getActivity(), "You are friend now with " + friendID + "!", Toast.LENGTH_SHORT).show();
-//                } else
-//                    Toast.makeText(getActivity(), "Error adding friend. Please try again.", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {}
-//        });
     }
 
     //The connection will fail and app will crash if you haven't paired first!

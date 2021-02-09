@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,8 +45,10 @@ import com.example.mosis_ispit.addon.UserStorage;
 import com.example.mosis_ispit.secondscreen.view.CreateDiscussion;
 import com.example.mosis_ispit.secondscreen.view.InDiscussion;
 import com.example.mosis_ispit.secondscreen.view.InDiscussionJoin;
+import com.example.mosis_ispit.secondscreen.view.SearchActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -83,6 +86,8 @@ public class MapFragment extends Fragment {
     DatabaseReference database;
     private TextView friends;
     private Button noFilter, friendsFilter, createDiscussion;
+    private FloatingActionButton search;
+//    private Spinner filterDiscussions;
     private Marker m;
     private UserPosition userPosition;
     private DiscussionPosition discussionPosition;
@@ -100,7 +105,7 @@ public class MapFragment extends Fragment {
     public static final int SHOW_ALL = 100;
     public static final int SHOW_FRIENDS = 200;
     static final int CREATE_DISCUSSION = 3;
-    static final int PROFILE_VIEW = 4;
+    static final int SEARCH = 4;
     static final int IN_DISCUSSION = 5;
     static final int IN_DISCUSSION_CREATOR = 6;
     public LocationManager locationManager;
@@ -133,6 +138,7 @@ public class MapFragment extends Fragment {
         noFilter = view.findViewById(R.id.map_filter_no);
         friendsFilter = view.findViewById(R.id.map_filter_friends);
         createDiscussion = view.findViewById(R.id.map_create_discussion);
+        search = view.findViewById(R.id.map_search);
 
         startPoint = new GeoPoint(43.3209, 21.8958); // Nis
 //        GeoPoint startPoint = new GeoPoint(42.99806, 21.94611); // Leskovac
@@ -194,6 +200,12 @@ public class MapFragment extends Fragment {
                 startActivityForResult(intentDisc, CREATE_DISCUSSION);
             });
 
+            search.setOnClickListener(v -> {
+                Intent intentSearch = new Intent(activity, SearchActivity.class);
+                intentSearch.putExtra("latitude", myLocationOverlay.getMyLocation().getLatitude());
+                intentSearch.putExtra("longitude", myLocationOverlay.getMyLocation().getLongitude());
+                startActivityForResult(intentSearch, SEARCH);
+            });
 
             listener = new MyLocationListener();
 
@@ -345,7 +357,7 @@ public class MapFragment extends Fragment {
                         double valueLongitude = marker.getPosition().getLongitude() - myLocationOverlay.getMyLocation().getLongitude();
                         Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
                         Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
-                        if ((Math.abs(valueLatitude) <= 0.0013883333333311043 || valueLatitude >= 0) && (Math.abs(valueLongitude) <= 0.0013883333333311043 || valueLongitude >= 0)) {
+                        if ((Math.abs(valueLatitude) <= 0.0013883333333311043) && (Math.abs(valueLongitude) <= 0.0013883333333311043)) {
                             // to implement
                             Log.d("MapFragmentLifecycle", marker.getTitle());
                             myLocationOverlay.disableMyLocation();
@@ -399,7 +411,7 @@ public class MapFragment extends Fragment {
                             double valueLongitude = marker.getPosition().getLongitude() - myLocationOverlay.getMyLocation().getLongitude();
                             Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
                             Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
-                            if ((Math.abs(valueLatitude) <= 0.0013883333333311043 || valueLatitude >= 0) && (Math.abs(valueLongitude) <= 0.0013883333333311043 || valueLongitude >= 0)) {
+                            if ((Math.abs(valueLatitude) <= 0.0013883333333311043) && (Math.abs(valueLongitude) <= 0.0013883333333311043)) {
                                 database.child("users").child(marker.getId()).child("notifications").child(currentUser.UID).setValue(currentUser.getUsername());
                                 Toast.makeText(activity, "Friend request sent", Toast.LENGTH_LONG).show();
                                 marker.setTitle("clicked");
@@ -479,46 +491,6 @@ public class MapFragment extends Fragment {
                 if(!currentUser.UID.equals(pos.UID)) {
                     if (friendList.contains(pos.username)) {
                         showFriend(pos);
-//                        storage.child("users").child(pos.UID).child("profile_img").getBytes(100*MB).addOnCompleteListener(new OnCompleteListener<byte[]>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<byte[]> task) {
-//                                byte[] data = task.getResult();
-//                                Bitmap friendAvatar = BitmapFactory.decodeByteArray(data, 0, data.length);
-//                                friendAvatar = Bitmap.createScaledBitmap(friendAvatar, 200, 200, true);
-//                                Drawable displayFriendImage = new BitmapDrawable(getResources(), friendAvatar);
-//                                Marker ma = new Marker(map);
-//                                ma.setVisible(true);
-//                                ma.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
-//                                ma.setIcon(displayFriendImage);
-//                                ma.setImage(displayFriendImage);
-//                                map.getOverlays().add(ma);
-////                                ma.setOnMarkerClickListener((marker, mapView) -> {
-////                                    double valueLatitude = marker.getPosition().getLatitude() - myLocationOverlay.getMyLocation().getLatitude();
-////                                    double valueLongitude = marker.getPosition().getLongitude() - myLocationOverlay.getMyLocation().getLongitude();
-////                                    Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
-////                                    Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
-////                                    if ((Math.abs(valueLatitude) <= 0.0013883333333311043 || valueLatitude >= 0) && (Math.abs(valueLongitude) <= 0.0013883333333311043 || valueLongitude >= 0)) {
-////                                        database.child("users").child(marker.getId()).child("notifications").child(currentUser.UID).setValue(currentUser.getUsername());
-////                                        Toast.makeText(activity, "Friend request sent", Toast.LENGTH_LONG).show();
-////                                        marker.setTitle("clicked");
-////                                    } else {
-////                                        Toast.makeText(activity, "Out of range, please get closer to send friend request", Toast.LENGTH_LONG).show();
-////                                    }
-////                                    return true;
-////                                });
-//
-//                                Marker m = new Marker(map);
-//                                m.setTextLabelFontSize(58);
-//                                m.setTextLabelBackgroundColor(Color.rgb(255, 255, 200));
-//                                m.setTextIcon(pos.username);
-//                                ma.setId(pos.UID);
-//                                ma.setTitle(pos.username);
-//                                ma.setSnippet(pos.UID);
-//                                m.setVisible(true);
-//                                m.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
-//                                map.getOverlays().add(m);
-//                            }
-//                        });
                     }
                 }
             }
@@ -556,9 +528,10 @@ public class MapFragment extends Fragment {
                         String topic = data.getStringExtra("topic");
                         String description = data.getStringExtra("description");
                         String size = data.getStringExtra("size");
-                        Discussion newDisc = new Discussion(topic, description, myLocationOverlay.getMyLocation().getLongitude(), myLocationOverlay.getMyLocation().getLatitude(), java.text.DateFormat.getDateTimeInstance().format(new Date()), Integer.parseInt(size), currentUser.UID, currentUser.getUsername());
+                        String type = data.getStringExtra("type");
+                        Discussion newDisc = new Discussion(topic, description, myLocationOverlay.getMyLocation().getLongitude(), myLocationOverlay.getMyLocation().getLatitude(), java.text.DateFormat.getDateTimeInstance().format(new Date()), Integer.parseInt(size), currentUser.UID, currentUser.getUsername(), type);
                         newDisc.key = database.push().getKey();
-                        discussionPosition = new DiscussionPosition(topic, description, currentUser.getUsername(), myLocationOverlay.getMyLocation().getLongitude(), myLocationOverlay.getMyLocation().getLatitude(), newDisc.maxUsers);
+                        discussionPosition = new DiscussionPosition(topic, description, currentUser.getUsername(), myLocationOverlay.getMyLocation().getLongitude(), myLocationOverlay.getMyLocation().getLatitude(), newDisc.maxUsers, newDisc.type);
                         discussionPosition.key = newDisc.key;
 
                         database.child(FIREBASE_DISCUSSION).child(newDisc.key).child("data").setValue(newDisc);

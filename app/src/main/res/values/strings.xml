@@ -81,4 +81,8 @@
     <string name="close_info">close</string>
     <string name="username_info">username</string>
     <string name="email_info">email</string>
+    <string name="search_for_discussions">Search for discussions</string>
+    <string name="name">Name</string>
+    <string name="search">Search</string>
+    <string name="exit_search">Exit</string>
 </resources>

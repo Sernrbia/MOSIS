@@ -41,19 +41,43 @@
     <Button
         android:id="@+id/map_create_discussion"
         android:layout_width="0dp"
-        app:layout_constraintWidth_percent="0.3"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.08"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
         android:text="@string/create_discussion"
         android:textSize="10sp"
         app:backgroundTint="#4CAF50"
         app:cornerRadius="40dp"
-        app:layout_constraintHorizontal_bias="0.945"
+        app:layout_constraintHeight_percent="0.08"
+        app:layout_constraintHorizontal_bias="0.944"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/map_filter_no"
+        app:layout_constraintWidth_percent="0.3"
         tools:ignore="SmallSp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/map_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="#8BC34A"
+        app:layout_constraintHorizontal_bias="0.859"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/map_create_discussion"
+        app:srcCompat="@android:drawable/ic_menu_search" />
+
+<!--    <Spinner-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="12dp"-->
+<!--        app:layout_constraintHorizontal_bias="0.944"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/map_search"-->
+<!--        app:layout_constraintWidth_percent="0.3" />-->
 
     <org.osmdroid.views.MapView
         android:id="@+id/map"

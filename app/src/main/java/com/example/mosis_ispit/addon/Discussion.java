@@ -15,6 +15,7 @@ public class Discussion implements Serializable {
     private String owner;
     public String ownerUsername;
     public ArrayList<User> users;
+    public String type;
     public boolean active;
     @Exclude
     public String key;
@@ -30,7 +31,7 @@ public class Discussion implements Serializable {
         this.latitude = lat;
     }
 
-    public Discussion(String t, String d, double lon, double lat, String s, int maxUsers, String owner, String ownerUsername) {
+    public Discussion(String t, String d, double lon, double lat, String s, int maxUsers, String owner, String ownerUsername, String type) {
         this.topic = t;
         this.description = d;
         this.longitude = lon;
@@ -42,6 +43,7 @@ public class Discussion implements Serializable {
         this.ownerUsername = ownerUsername;
         users = new ArrayList<>();
         this.active = true;
+        this.type = type;
     }
 
     public String getTopic() {

@@ -20,6 +20,20 @@
         app:layout_constraintTop_toBottomOf="@+id/create_discussion_layout_count_label"
         app:layout_constraintWidth_percent="0.2" />
 
+    <Spinner
+        android:id="@+id/create_discussion_layout_type"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_marginTop="12dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/create_discussion_layout_size"
+        app:layout_constraintWidth_percent="0.4"
+        android:gravity="center_horizontal" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/create_discussion_layout_horizontal_guide"
         android:layout_width="match_parent"
@@ -54,7 +68,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/create_discussion_layout_size" />
+        app:layout_constraintTop_toBottomOf="@id/create_discussion_layout_type" />
 
     <Button
         android:id="@+id/create_discussion_layout_close"
@@ -72,18 +86,18 @@
         android:id="@+id/create_discussion_layout_name_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="28dp"
         android:ems="10"
+        android:gravity="center_horizontal"
         android:text="@string/discussion_topic"
+        android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textAlignment="center"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/create_discussion_layout_label"
-        tools:ignore="TextViewEdits"
-        android:gravity="center_horizontal" />
+        tools:ignore="TextViewEdits" />
 
     <TextView
         android:id="@+id/create_discussion_layout_description_label"

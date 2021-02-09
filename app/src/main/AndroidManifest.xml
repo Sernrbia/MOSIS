@@ -6,7 +6,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -31,10 +32,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mosis_ispit"
         tools:ignore="AllowBackup">
-        <activity android:name=".secondscreen.view.InDiscussionJoin"
+        <activity android:name=".secondscreen.view.SearchActivity"
+            android:label="Search"
+            android:theme="@style/AppTheme.ActionBar" />
+        <activity
+            android:name=".secondscreen.view.InDiscussionJoin"
             android:label="InDiscussionJoin"
             android:theme="@style/AppTheme.ActionBar" />
-        <activity android:name=".secondscreen.view.InDiscussion"
+        <activity
+            android:name=".secondscreen.view.InDiscussion"
             android:label="InDiscussion"
             android:theme="@style/AppTheme.ActionBar" />
         <activity
@@ -56,6 +62,7 @@
             android:theme="@style/AppTheme.ActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
