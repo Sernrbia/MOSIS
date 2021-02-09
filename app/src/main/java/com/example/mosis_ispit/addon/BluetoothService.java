@@ -20,7 +20,7 @@ import java.util.UUID;
 public class BluetoothService {
     private static final String TAG = "BluetoothService";
     private static final String appName = "DISCUSSGO";
-    private static final UUID MY_UUID_INSECURE = UUID.fromString("78e80aa8-cc53-41ef-86ef-ee50d815733b"); // address over which user connect
+    private static final UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); // address over which user connect
     private final BluetoothAdapter mBluetoothAdapter;
     public Context mContext;
     private AcceptThread mInsecureAcceptThread;
@@ -99,10 +99,10 @@ public class BluetoothService {
             } catch (IOException e) {
                 Log.e(TAG, "ConnectThread: Could not create InsecureRfcommSocket " + e.getMessage());
             }
-
-            mmSocket = tmp;
             // Always cancel discovery because it will slow down a connection
             mBluetoothAdapter.cancelDiscovery();
+
+            mmSocket = tmp;
             // Make a connection to the BluetoothSocket
             try {
                 mmSocket.connect();
@@ -198,7 +198,7 @@ public class BluetoothService {
             try {
                 mmOutStream.write(bytes);
             } catch (IOException e) {
-                Log.e(TAG, "write: Error writing to output stream. " + e.getMessage() );
+                Log.e(TAG, "write: Error writing to output stream. " + e.getMessage());
             }
         }
 

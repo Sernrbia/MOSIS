@@ -49,7 +49,7 @@ public class AddFriendsFragment extends Fragment {
     private Button add, send, refresh;
     private BluetoothService bluetoothService;
     private BluetoothAdapter mBluetoothAdapter;
-    private static final UUID MY_UUID = UUID.fromString("78e80aa8-cc53-41ef-86ef-ee50d815733b");
+    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     public BluetoothDevice mBTDevice;
     public ArrayList<BluetoothDevice> mBTDevices = new ArrayList<>();
     public AddFriendsAdapter mAddFriendListAdapter;
@@ -78,6 +78,8 @@ public class AddFriendsFragment extends Fragment {
         refresh = view.findViewById(R.id.add_new_friends_refresh);
         send.setEnabled(false);
         add.setEnabled(false);
+        mAddFriendListAdapter = new AddFriendsAdapter(requireContext(), R.layout.add_friends_list_view, mBTDevices);
+        users.setAdapter(mAddFriendListAdapter);
         return view;
     }
 
@@ -100,7 +102,7 @@ public class AddFriendsFragment extends Fragment {
                     mBTDevice = mBTDevices.get(i);
                     bluetoothService = new BluetoothService(getActivity());
                 }
-                send.setEnabled(true);
+//                send.setEnabled(true);
                 startConnection();
             }
         });
@@ -115,13 +117,15 @@ public class AddFriendsFragment extends Fragment {
         // Looking for unpaired devices
         mBluetoothAdapter.startDiscovery();
         IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        getActivity().registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
+        requireActivity().registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
 
         send.setOnClickListener(s -> {
             try {
                 bluetoothService.write(userID);
-                add.setVisibility(View.VISIBLE);
-            } catch (Exception e){}
+                add.setEnabled(true);
+            } catch (Exception e){
+                Log.e("bluetooth", e.getMessage());
+            }
         });
 
         add.setOnClickListener(new View.OnClickListener() {
@@ -169,7 +173,9 @@ public class AddFriendsFragment extends Fragment {
             getActivity().unregisterReceiver(mBroadcastReceiver3);
             getActivity().unregisterReceiver(mBroadcastReceiver4);
         }
-        catch (Exception e){}
+        catch (Exception e){
+            Log.e("friends error", e.getMessage());
+        }
 
         mBluetoothAdapter.cancelDiscovery();
         mBluetoothAdapter.disable();
@@ -180,21 +186,23 @@ public class AddFriendsFragment extends Fragment {
     private void addFriend() {
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
         databaseReference.child(friendID).child("notifications").child(mCurrentUser.getUid()).setValue(username);
-        databaseReference.child(friendID).child("data").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-
-                if(user != null) {
-                    Toast.makeText(getActivity(), "Friend request has been sent to " + user.getUsername() + "!", Toast.LENGTH_SHORT).show();
-                    databaseReference.child(mCurrentUser.getUid()).child("friends").child(friendID).setValue(user);
-                } else
-                    Toast.makeText(getActivity(), "Error adding friend. Please try again.", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
+        Toast.makeText(getActivity(), "Your request has been sent to " + friendID + "!", Toast.LENGTH_SHORT).show();
+//        databaseReference.child(mCurrentUser.getUid()).child("friends").child(friendID).setValue(username);
+//        databaseReference.child(friendID).child("data").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                User user = dataSnapshot.getValue(User.class);
+//
+//                if(user != null) {
+//                    databaseReference.child(mCurrentUser.getUid()).child("friends").child(friendID).setValue(user.getUsername());
+//                    Toast.makeText(getActivity(), "You are friend now with " + friendID + "!", Toast.LENGTH_SHORT).show();
+//                } else
+//                    Toast.makeText(getActivity(), "Error adding friend. Please try again.", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {}
+//        });
     }
 
     //The connection will fail and app will crash if you haven't paired first!
@@ -205,24 +213,6 @@ public class AddFriendsFragment extends Fragment {
     public void startBTConnection(BluetoothDevice device, UUID uuid){
         bluetoothService.startClient(device, uuid);
     }
-
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//
-//        try {
-//            getActivity().unregisterReceiver(mBroadcastReceiver1);
-//            getActivity().unregisterReceiver(mBroadcastReceiver2);
-//            getActivity().unregisterReceiver(mBroadcastReceiver3);
-//            getActivity().unregisterReceiver(mBroadcastReceiver4);
-//        }
-//        catch (Exception e){}
-//
-//        mBluetoothAdapter.cancelDiscovery();
-//        mBluetoothAdapter.disable();
-//        IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-//        getActivity().registerReceiver(mBroadcastReceiver1, BTIntent);
-//    }
 
     @TargetApi(Build.VERSION_CODES.M)
     private void checkBTPermissions() {
@@ -310,9 +300,13 @@ public class AddFriendsFragment extends Fragment {
             final String action = intent.getAction();
             if (action.equals(BluetoothDevice.ACTION_FOUND)){
                 BluetoothDevice device = intent.getParcelableExtra (BluetoothDevice.EXTRA_DEVICE);
-                mBTDevices.add(device);
-                mAddFriendListAdapter = new AddFriendsAdapter(context, R.layout.add_friends_list_view, mBTDevices);
-                users.setAdapter(mAddFriendListAdapter);
+//                mAddFriendListAdapter.clear();
+                if (!mBTDevices.contains(device)) {
+                    mBTDevices.add(device);
+                    mAddFriendListAdapter.notifyDataSetChanged();
+                }
+//                mAddFriendListAdapter = new AddFriendsAdapter(context, R.layout.add_friends_list_view, mBTDevices);
+//                users.setAdapter(mAddFriendListAdapter);
             }
         }
     };
@@ -330,6 +324,7 @@ public class AddFriendsFragment extends Fragment {
                 //3 cases:
                 //case1: bonded already
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
+                    send.setEnabled(true);
                     Log.d(TAG, "BroadcastReceiver: BOND_BONDED.");
                     //inside BroadcastReceiver4
                     mBTDevice = mDevice;
