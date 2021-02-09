@@ -183,4 +183,11 @@ public class SearchActivity extends AppCompatActivity {
         ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, filtered);
         list.setAdapter(itemsAdapter);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FirebaseDatabase.getInstance().getReference().child("discussionsLocations").removeEventListener(discussionsLocationsListener);
+        discussionsLocationsListener = null;
+    }
 }
