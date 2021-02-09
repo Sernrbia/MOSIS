@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity {
 
-    private EditText searchbar;
+    private EditText searchbar, range;
     private Spinner type, typeSelect;
     private Button exit;
     private ListView list;
@@ -44,6 +44,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         searchbar = findViewById(R.id.search_searchbar);
+        range = findViewById(R.id.search_activity_range);
         type = findViewById(R.id.search_type);
         typeSelect = findViewById(R.id.search_type_selector);
         exit = findViewById(R.id.search_done);
@@ -84,14 +85,16 @@ public class SearchActivity extends AppCompatActivity {
                 selected = items[position];
                 if (selected.equals("topic")) {
                     typeSelect.setVisibility(View.INVISIBLE);
+                    range.setVisibility(View.INVISIBLE);
                     searchbar.setVisibility(View.VISIBLE);
                 } else if (selected.equals("type")) {
                     searchbar.setVisibility(View.INVISIBLE);
+                    range.setVisibility(View.INVISIBLE);
                     typeSelect.setVisibility(View.VISIBLE);
                 } else {
                     searchbar.setVisibility(View.INVISIBLE);
                     typeSelect.setVisibility(View.INVISIBLE);
-                    searchByRange();
+                    range.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -141,6 +144,25 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+        range.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (selected.equals("range") && !range.getText().toString().trim().equals("")) {
+                    searchByRange(Double.parseDouble(range.getText().toString().trim()));
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         exit.setOnClickListener(v -> {
             finish();
         });
@@ -170,12 +192,12 @@ public class SearchActivity extends AppCompatActivity {
         list.setAdapter(itemsAdapter);
     }
 
-    private void searchByRange() {
+    private void searchByRange(double ran) {
         ArrayList<String> filtered = new ArrayList<>();
         for (DiscussionPosition pos : discussionsLocations) {
             double valueLatitude = latitude - pos.latitude;
             double valueLongitude = longitude - pos.longitude;
-            if ((Math.abs(valueLatitude) <= 0.0013883333333311043) && (Math.abs(valueLongitude) <= 0.0013883333333311043)) {
+            if ((Math.abs(valueLatitude) <= ran) && (Math.abs(valueLongitude) <= ran)) {
                 filtered.add("Topic: " + pos.topic + " Type: " + pos.type + " Location: x:" + pos.latitude + ", y:" + pos.longitude);
             }
         }
