@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -146,11 +147,15 @@ public class LogInActivity extends AppCompatActivity implements LoginFragment.Lo
         super.onStart();
 
         activeUser = auth.getCurrentUser();
-        if (activeUser != null) {
+        try {
+            if (activeUser != null) {
 //            activeUser = null;
-            Intent i = new Intent(LogInActivity.this, MainScreenActivity.class);
-            startActivity(i);
-            finish();
+                Intent i = new Intent(LogInActivity.this, MainScreenActivity.class);
+                startActivity(i);
+                finish();
+            }
+        } catch (Exception e) {
+            Log.e("Log", e.getMessage());
         }
     }
 
@@ -158,11 +163,15 @@ public class LogInActivity extends AppCompatActivity implements LoginFragment.Lo
     public void onResume() {
         super.onResume();
         activeUser = auth.getCurrentUser();
-        if (activeUser != null) {
+        try {
+            if (activeUser != null) {
 //            activeUser = null;
-            Intent i = new Intent(LogInActivity.this, MainScreenActivity.class);
-            startActivity(i);
-            finish();
+                Intent i = new Intent(LogInActivity.this, MainScreenActivity.class);
+                startActivity(i);
+                finish();
+            }
+        } catch (Exception e) {
+            Log.e("Log", e.getMessage());
         }
     }
 

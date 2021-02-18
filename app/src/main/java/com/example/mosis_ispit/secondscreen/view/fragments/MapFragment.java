@@ -272,28 +272,32 @@ public class MapFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Log.d("MapFragmentLifecycle", "User location change in db");
 
-                for (DataSnapshot us : snapshot.getChildren()) {
-                    UserPosition up = us.getValue(UserPosition.class);
-                    if (up != null) {
-                        boolean found = false;
-                        if (userLocations.size() > 0) {
-                            for (UserPosition upos : userLocations) {
-                                if (upos.UID.equals(up.UID)) {
-                                    found = true;
-                                    upos.setLatitude(up.getLatitude());
-                                    upos.setLongitude(up.getLongitude());
+                try {
+                    for (DataSnapshot us : snapshot.getChildren()) {
+                        UserPosition up = us.getValue(UserPosition.class);
+                        if (up != null) {
+                            boolean found = false;
+                            if (userLocations.size() > 0) {
+                                for (UserPosition upos : userLocations) {
+                                    if (upos.UID.equals(up.UID)) {
+                                        found = true;
+                                        upos.setLatitude(up.getLatitude());
+                                        upos.setLongitude(up.getLongitude());
+                                    }
                                 }
-                            }
-                            if (!found) {
+                                if (!found) {
+                                    userLocations.add(up);
+                                }
+                            } else {
                                 userLocations.add(up);
                             }
-                        } else {
-                            userLocations.add(up);
                         }
                     }
-                }
 
-                updateMap();
+                    updateMap();
+                } catch (Exception e) {
+                    Log.e("Error", e.getMessage());
+                }
             }
 
             @Override
@@ -307,14 +311,18 @@ public class MapFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Log.d("MapFragmentLifecycle", "Location change in db");
 
-                discussionsLocations.clear();
+                try {
+                    discussionsLocations.clear();
 
-                for (DataSnapshot us : snapshot.getChildren()) {
-                    DiscussionPosition up = us.getValue(DiscussionPosition.class);
-                    discussionsLocations.add(up);
+                    for (DataSnapshot us : snapshot.getChildren()) {
+                        DiscussionPosition up = us.getValue(DiscussionPosition.class);
+                        discussionsLocations.add(up);
+                    }
+
+                    updateMap();
+                } catch (Exception e) {
+                    Log.e("Error", e.getMessage());
                 }
-
-                updateMap();
             }
 
             @Override
@@ -328,26 +336,30 @@ public class MapFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Log.d("MapFragmentLifecycle", "User location change in db");
 
-                for (DataSnapshot us : snapshot.getChildren()) {
-                    String up = (String) us.getValue();
-                    if (up != null) {
-                        boolean found = false;
-                        if (friendList.size() > 0) {
-                            for (String upos : friendList) {
-                                if (upos.equals(up)) {
-                                    found = true;
+                try {
+                    for (DataSnapshot us : snapshot.getChildren()) {
+                        String up = (String) us.getValue();
+                        if (up != null) {
+                            boolean found = false;
+                            if (friendList.size() > 0) {
+                                for (String upos : friendList) {
+                                    if (upos.equals(up)) {
+                                        found = true;
+                                    }
                                 }
-                            }
-                            if (!found) {
+                                if (!found) {
+                                    friendList.add(up);
+                                }
+                            } else {
                                 friendList.add(up);
                             }
-                        } else {
-                            friendList.add(up);
                         }
                     }
-                }
 
-                updateMap();
+                    updateMap();
+                } catch (Exception e) {
+                    Log.e("Log", e.getMessage());
+                }
             }
 
             @Override
@@ -409,202 +421,218 @@ public class MapFragment extends Fragment {
             rad = Double.parseDouble(radius.getText().toString().trim());
         }
         if (discussionsLocations.size() > 0) {
-            for (DiscussionPosition pos : discussionsLocations) {
-                double lat = pos.latitude - myLocationOverlay.getMyLocation().getLatitude();
-                double lon = pos.longitude - myLocationOverlay.getMyLocation().getLongitude();
-                if ((Math.abs(lat) <= rad) && (Math.abs(lon) <= rad)) {
-                    Marker ma = new Marker(map);
-                    ma.setIcon(ContextCompat.getDrawable(requireContext(),R.drawable.round_explore_black_36));
-                    ma.setVisible(true);
-                    ma.setPosition(new GeoPoint(pos.latitude, pos.longitude));
-                    map.getOverlays().add(ma);
-                    ma.setTitle(pos.key);
-                    ma.setSnippet(pos.topic);
-                    ma.setId(pos.description);
-                    ma.setSubDescription(pos.owner);
-                    ma.setAlpha(pos.maxUsers);
-                    ma.setOnMarkerClickListener((marker, mapView) -> {
-                        double valueLatitude = marker.getPosition().getLatitude() - myLocationOverlay.getMyLocation().getLatitude();
-                        double valueLongitude = marker.getPosition().getLongitude() - myLocationOverlay.getMyLocation().getLongitude();
-                        Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
-                        Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
-                        if ((Math.abs(valueLatitude) <= 0.0013883333333311043) && (Math.abs(valueLongitude) <= 0.0013883333333311043)) {
-                            // to implement
-                            Log.d("MapFragmentLifecycle", marker.getTitle());
-                            myLocationOverlay.disableMyLocation();
-                            myLocationOverlay.disableFollowLocation();
-                            Intent intent = new Intent(activity, InDiscussionJoin.class);
-                            intent.putExtra("discussion", marker.getTitle());
-                            intent.putExtra("description", marker.getId());
-                            intent.putExtra("topic", marker.getSnippet());
-                            intent.putExtra("owner", marker.getSubDescription());
-                            intent.putExtra("maxUsers", (int) marker.getAlpha());
-                            intent.putExtra("requestCode", "JOINING_DISCUSSION");
-                            intent.putExtra("user", currentUser);
-                            startActivityForResult(intent, IN_DISCUSSION);
-                        } else {
-                            Toast.makeText(activity, "Out of range, please get closer", Toast.LENGTH_LONG).show();
-                        }
-                        return true;
-                    });
-
-                    Marker m = new Marker(map);
-                    m.setTextLabelFontSize(58);
-                    m.setTextLabelBackgroundColor(Color.rgb(255, 255, 120));
-//                    Toast.makeText(activity, pos.topic, Toast.LENGTH_SHORT).show();
-                    m.setTextIcon(pos.topic);
-                    m.setVisible(true);
-                    ma.setPosition(new GeoPoint(pos.latitude, pos.longitude));
-                    map.getOverlays().add(m);
-                }
-            }
-        }
-    }
-
-    private void showAllDiscussion() {
-        if (discussionsLocations.size() > 0) {
-            for (DiscussionPosition pos : discussionsLocations) {
-                Marker ma = new Marker(map);
-                ma.setIcon(ContextCompat.getDrawable(requireContext(),R.drawable.round_explore_black_36));
-                ma.setVisible(true);
-                ma.setPosition(new GeoPoint(pos.latitude, pos.longitude));
-                map.getOverlays().add(ma);
-                ma.setTitle(pos.key);
-                ma.setSnippet(pos.topic);
-                ma.setId(pos.description);
-                ma.setSubDescription(pos.owner);
-                ma.setAlpha(pos.maxUsers);
-                ma.setOnMarkerClickListener((marker, mapView) -> {
-                    double valueLatitude = marker.getPosition().getLatitude() - myLocationOverlay.getMyLocation().getLatitude();
-                    double valueLongitude = marker.getPosition().getLongitude() - myLocationOverlay.getMyLocation().getLongitude();
-                    Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
-                    Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
-                    if ((Math.abs(valueLatitude) <= 0.0013883333333311043) && (Math.abs(valueLongitude) <= 0.0013883333333311043)) {
-                        // to implement
-                        Log.d("MapFragmentLifecycle", marker.getTitle());
-                        myLocationOverlay.disableMyLocation();
-                        myLocationOverlay.disableFollowLocation();
-                        Intent intent = new Intent(activity, InDiscussionJoin.class);
-                        intent.putExtra("discussion", marker.getTitle());
-                        intent.putExtra("description", marker.getId());
-                        intent.putExtra("topic", marker.getSnippet());
-                        intent.putExtra("owner", marker.getSubDescription());
-                        intent.putExtra("maxUsers", (int) marker.getAlpha());
-                        intent.putExtra("requestCode", "JOINING_DISCUSSION");
-                        intent.putExtra("user", currentUser);
-                        startActivityForResult(intent, IN_DISCUSSION);
-                    } else {
-                        Toast.makeText(activity, "Out of range, please get closer", Toast.LENGTH_LONG).show();
-                    }
-                    return true;
-                });
-
-                Marker m = new Marker(map);
-                m.setTextLabelFontSize(58);
-                m.setTextLabelBackgroundColor(Color.rgb(255, 255, 120));
-//                    Toast.makeText(activity, pos.topic, Toast.LENGTH_SHORT).show();
-                m.setTextIcon(pos.topic);
-                m.setVisible(true);
-                ma.setPosition(new GeoPoint(pos.latitude, pos.longitude));
-                map.getOverlays().add(m);
-            }
-        }
-    }
-
-    private void showFilteredDiscussion() {
-        if (discussionsLocations.size() > 0) {
-            for (DiscussionPosition pos : discussionsLocations) {
-                if (pos.type.equals(selected)) {
-                    Marker ma = new Marker(map);
-                    ma.setIcon(ContextCompat.getDrawable(requireContext(),R.drawable.round_explore_black_36));
-                    ma.setVisible(true);
-                    ma.setPosition(new GeoPoint(pos.latitude, pos.longitude));
-                    map.getOverlays().add(ma);
-                    ma.setTitle(pos.key);
-                    ma.setSnippet(pos.topic);
-                    ma.setId(pos.description);
-                    ma.setSubDescription(pos.owner);
-                    ma.setAlpha(pos.maxUsers);
-                    ma.setOnMarkerClickListener((marker, mapView) -> {
-                        double valueLatitude = marker.getPosition().getLatitude() - myLocationOverlay.getMyLocation().getLatitude();
-                        double valueLongitude = marker.getPosition().getLongitude() - myLocationOverlay.getMyLocation().getLongitude();
-                        Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
-                        Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
-                        if ((Math.abs(valueLatitude) <= 0.0013883333333311043) && (Math.abs(valueLongitude) <= 0.0013883333333311043)) {
-                            // to implement
-                            Log.d("MapFragmentLifecycle", marker.getTitle());
-                            myLocationOverlay.disableMyLocation();
-                            myLocationOverlay.disableFollowLocation();
-                            Intent intent = new Intent(activity, InDiscussionJoin.class);
-                            intent.putExtra("discussion", marker.getTitle());
-                            intent.putExtra("description", marker.getId());
-                            intent.putExtra("topic", marker.getSnippet());
-                            intent.putExtra("owner", marker.getSubDescription());
-                            intent.putExtra("maxUsers", (int) marker.getAlpha());
-                            intent.putExtra("requestCode", "JOINING_DISCUSSION");
-                            intent.putExtra("user", currentUser);
-                            startActivityForResult(intent, IN_DISCUSSION);
-                        } else {
-                            Toast.makeText(activity, "Out of range, please get closer", Toast.LENGTH_LONG).show();
-                        }
-                        return true;
-                    });
-
-                    Marker m = new Marker(map);
-                    m.setTextLabelFontSize(58);
-                    m.setTextLabelBackgroundColor(Color.rgb(255, 255, 120));
-//                    Toast.makeText(activity, pos.topic, Toast.LENGTH_SHORT).show();
-                    m.setTextIcon(pos.topic);
-                    m.setVisible(true);
-                    ma.setPosition(new GeoPoint(pos.latitude, pos.longitude));
-                    map.getOverlays().add(m);
-                }
-            }
-        }
-    }
-
-    public void showAll() {
-        if (userLocations.size() > 0) {
-            for (UserPosition pos : userLocations) {
-                if(!currentUser.UID.equals(pos.UID)) {
-                    if (friendList.contains(pos.username)) {
-                        showFriend(pos);
-                    } else {
+            try {
+                for (DiscussionPosition pos : discussionsLocations) {
+                    double lat = pos.latitude - myLocationOverlay.getMyLocation().getLatitude();
+                    double lon = pos.longitude - myLocationOverlay.getMyLocation().getLongitude();
+                    if ((Math.abs(lat) <= rad) && (Math.abs(lon) <= rad)) {
                         Marker ma = new Marker(map);
-                        ma.setIcon(ContextCompat.getDrawable(requireContext(),R.drawable.ic_person_24dp));
+                        ma.setIcon(ContextCompat.getDrawable(requireContext(),R.drawable.round_explore_black_36));
                         ma.setVisible(true);
-                        ma.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
-                        ma.setId(pos.UID);
-                        ma.setTitle(pos.username);
-                        ma.setSnippet(pos.UID);
+                        ma.setPosition(new GeoPoint(pos.latitude, pos.longitude));
+                        map.getOverlays().add(ma);
+                        ma.setTitle(pos.key);
+                        ma.setSnippet(pos.topic);
+                        ma.setId(pos.description);
+                        ma.setSubDescription(pos.owner);
+                        ma.setAlpha(pos.maxUsers);
                         ma.setOnMarkerClickListener((marker, mapView) -> {
                             double valueLatitude = marker.getPosition().getLatitude() - myLocationOverlay.getMyLocation().getLatitude();
                             double valueLongitude = marker.getPosition().getLongitude() - myLocationOverlay.getMyLocation().getLongitude();
                             Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
                             Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
                             if ((Math.abs(valueLatitude) <= 0.0013883333333311043) && (Math.abs(valueLongitude) <= 0.0013883333333311043)) {
-                                database.child("users").child(marker.getId()).child("notifications").child(currentUser.UID).setValue(currentUser.getUsername());
-                                Toast.makeText(activity, "Friend request sent", Toast.LENGTH_LONG).show();
-                                marker.setTitle("clicked");
+                                // to implement
+                                Log.d("MapFragmentLifecycle", marker.getTitle());
+                                myLocationOverlay.disableMyLocation();
+                                myLocationOverlay.disableFollowLocation();
+                                Intent intent = new Intent(activity, InDiscussionJoin.class);
+                                intent.putExtra("discussion", marker.getTitle());
+                                intent.putExtra("description", marker.getId());
+                                intent.putExtra("topic", marker.getSnippet());
+                                intent.putExtra("owner", marker.getSubDescription());
+                                intent.putExtra("maxUsers", (int) marker.getAlpha());
+                                intent.putExtra("requestCode", "JOINING_DISCUSSION");
+                                intent.putExtra("user", currentUser);
+                                startActivityForResult(intent, IN_DISCUSSION);
                             } else {
-                                Toast.makeText(activity, "Out of range, please get closer to send friend request", Toast.LENGTH_LONG).show();
+                                Toast.makeText(activity, "Out of range, please get closer", Toast.LENGTH_LONG).show();
                             }
                             return true;
                         });
-                        map.getOverlays().add(ma);
 
                         Marker m = new Marker(map);
                         m.setTextLabelFontSize(58);
-                        m.setTextLabelBackgroundColor(Color.rgb(255, 255, 200));
-                        m.setTextIcon(pos.username);
+                        m.setTextLabelBackgroundColor(Color.rgb(255, 255, 120));
+//                    Toast.makeText(activity, pos.topic, Toast.LENGTH_SHORT).show();
+                        m.setTextIcon(pos.topic);
                         m.setVisible(true);
-                        m.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
-                        m.setId(pos.UID);
-                        m.setTitle(pos.username);
-                        m.setSnippet(pos.UID);
+                        ma.setPosition(new GeoPoint(pos.latitude, pos.longitude));
                         map.getOverlays().add(m);
                     }
                 }
+            } catch(Exception e) {
+                Log.e("Log", e.getMessage());
+            }
+        }
+    }
+
+    private void showAllDiscussion() {
+        if (discussionsLocations.size() > 0) {
+            try {
+                for (DiscussionPosition pos : discussionsLocations) {
+                    Marker ma = new Marker(map);
+                    ma.setIcon(ContextCompat.getDrawable(requireContext(),R.drawable.round_explore_black_36));
+                    ma.setVisible(true);
+                    ma.setPosition(new GeoPoint(pos.latitude, pos.longitude));
+                    map.getOverlays().add(ma);
+                    ma.setTitle(pos.key);
+                    ma.setSnippet(pos.topic);
+                    ma.setId(pos.description);
+                    ma.setSubDescription(pos.owner);
+                    ma.setAlpha(pos.maxUsers);
+                    ma.setOnMarkerClickListener((marker, mapView) -> {
+                        double valueLatitude = marker.getPosition().getLatitude() - myLocationOverlay.getMyLocation().getLatitude();
+                        double valueLongitude = marker.getPosition().getLongitude() - myLocationOverlay.getMyLocation().getLongitude();
+                        Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
+                        Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
+                        if ((Math.abs(valueLatitude) <= 0.0013883333333311043) && (Math.abs(valueLongitude) <= 0.0013883333333311043)) {
+                            // to implement
+                            Log.d("MapFragmentLifecycle", marker.getTitle());
+                            myLocationOverlay.disableMyLocation();
+                            myLocationOverlay.disableFollowLocation();
+                            Intent intent = new Intent(activity, InDiscussionJoin.class);
+                            intent.putExtra("discussion", marker.getTitle());
+                            intent.putExtra("description", marker.getId());
+                            intent.putExtra("topic", marker.getSnippet());
+                            intent.putExtra("owner", marker.getSubDescription());
+                            intent.putExtra("maxUsers", (int) marker.getAlpha());
+                            intent.putExtra("requestCode", "JOINING_DISCUSSION");
+                            intent.putExtra("user", currentUser);
+                            startActivityForResult(intent, IN_DISCUSSION);
+                        } else {
+                            Toast.makeText(activity, "Out of range, please get closer", Toast.LENGTH_LONG).show();
+                        }
+                        return true;
+                    });
+
+                    Marker m = new Marker(map);
+                    m.setTextLabelFontSize(58);
+                    m.setTextLabelBackgroundColor(Color.rgb(255, 255, 120));
+//                    Toast.makeText(activity, pos.topic, Toast.LENGTH_SHORT).show();
+                    m.setTextIcon(pos.topic);
+                    m.setVisible(true);
+                    ma.setPosition(new GeoPoint(pos.latitude, pos.longitude));
+                    map.getOverlays().add(m);
+                }
+            } catch (Exception e) {
+                Log.e("Log", e.getMessage());
+            }
+        }
+    }
+
+    private void showFilteredDiscussion() {
+        if (discussionsLocations.size() > 0) {
+            try {
+                for (DiscussionPosition pos : discussionsLocations) {
+                    if (pos.type.equals(selected)) {
+                        Marker ma = new Marker(map);
+                        ma.setIcon(ContextCompat.getDrawable(requireContext(),R.drawable.round_explore_black_36));
+                        ma.setVisible(true);
+                        ma.setPosition(new GeoPoint(pos.latitude, pos.longitude));
+                        map.getOverlays().add(ma);
+                        ma.setTitle(pos.key);
+                        ma.setSnippet(pos.topic);
+                        ma.setId(pos.description);
+                        ma.setSubDescription(pos.owner);
+                        ma.setAlpha(pos.maxUsers);
+                        ma.setOnMarkerClickListener((marker, mapView) -> {
+                            double valueLatitude = marker.getPosition().getLatitude() - myLocationOverlay.getMyLocation().getLatitude();
+                            double valueLongitude = marker.getPosition().getLongitude() - myLocationOverlay.getMyLocation().getLongitude();
+                            Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
+                            Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
+                            if ((Math.abs(valueLatitude) <= 0.0013883333333311043) && (Math.abs(valueLongitude) <= 0.0013883333333311043)) {
+                                // to implement
+                                Log.d("MapFragmentLifecycle", marker.getTitle());
+                                myLocationOverlay.disableMyLocation();
+                                myLocationOverlay.disableFollowLocation();
+                                Intent intent = new Intent(activity, InDiscussionJoin.class);
+                                intent.putExtra("discussion", marker.getTitle());
+                                intent.putExtra("description", marker.getId());
+                                intent.putExtra("topic", marker.getSnippet());
+                                intent.putExtra("owner", marker.getSubDescription());
+                                intent.putExtra("maxUsers", (int) marker.getAlpha());
+                                intent.putExtra("requestCode", "JOINING_DISCUSSION");
+                                intent.putExtra("user", currentUser);
+                                startActivityForResult(intent, IN_DISCUSSION);
+                            } else {
+                                Toast.makeText(activity, "Out of range, please get closer", Toast.LENGTH_LONG).show();
+                            }
+                            return true;
+                        });
+
+                        Marker m = new Marker(map);
+                        m.setTextLabelFontSize(58);
+                        m.setTextLabelBackgroundColor(Color.rgb(255, 255, 120));
+//                    Toast.makeText(activity, pos.topic, Toast.LENGTH_SHORT).show();
+                        m.setTextIcon(pos.topic);
+                        m.setVisible(true);
+                        ma.setPosition(new GeoPoint(pos.latitude, pos.longitude));
+                        map.getOverlays().add(m);
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("Log", e.getMessage());
+            }
+        }
+    }
+
+    public void showAll() {
+        if (userLocations.size() > 0) {
+            try {
+                for (UserPosition pos : userLocations) {
+                    if(!currentUser.UID.equals(pos.UID)) {
+                        if (friendList.contains(pos.username)) {
+                            showFriend(pos);
+                        } else {
+                            Marker ma = new Marker(map);
+                            ma.setIcon(ContextCompat.getDrawable(requireContext(),R.drawable.ic_person_24dp));
+                            ma.setVisible(true);
+                            ma.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
+                            ma.setId(pos.UID);
+                            ma.setTitle(pos.username);
+                            ma.setSnippet(pos.UID);
+                            ma.setOnMarkerClickListener((marker, mapView) -> {
+                                double valueLatitude = marker.getPosition().getLatitude() - myLocationOverlay.getMyLocation().getLatitude();
+                                double valueLongitude = marker.getPosition().getLongitude() - myLocationOverlay.getMyLocation().getLongitude();
+                                Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
+                                Log.d("MapFragmentLifecycle", Double.toString(Math.abs(valueLatitude)));
+                                if ((Math.abs(valueLatitude) <= 0.0013883333333311043) && (Math.abs(valueLongitude) <= 0.0013883333333311043)) {
+                                    database.child("users").child(marker.getId()).child("notifications").child(currentUser.UID).setValue(currentUser.getUsername());
+                                    Toast.makeText(activity, "Friend request sent", Toast.LENGTH_LONG).show();
+                                    marker.setTitle("clicked");
+                                } else {
+                                    Toast.makeText(activity, "Out of range, please get closer to send friend request", Toast.LENGTH_LONG).show();
+                                }
+                                return true;
+                            });
+                            map.getOverlays().add(ma);
+
+                            Marker m = new Marker(map);
+                            m.setTextLabelFontSize(58);
+                            m.setTextLabelBackgroundColor(Color.rgb(255, 255, 200));
+                            m.setTextIcon(pos.username);
+                            m.setVisible(true);
+                            m.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
+                            m.setId(pos.UID);
+                            m.setTitle(pos.username);
+                            m.setSnippet(pos.UID);
+                            map.getOverlays().add(m);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("Log", e.getMessage());
             }
         }
     }
@@ -613,19 +641,20 @@ public class MapFragment extends Fragment {
         storage.child("users").child(pos.UID).child("profile_img").getBytes(100*MB).addOnCompleteListener(new OnCompleteListener<byte[]>() {
             @Override
             public void onComplete(@NonNull Task<byte[]> task) {
-                byte[] data = task.getResult();
-                Bitmap friendAvatar = BitmapFactory.decodeByteArray(data, 0, data.length);
-                friendAvatar = Bitmap.createScaledBitmap(friendAvatar, 200, 200, true);
-                Drawable displayFriendImage = new BitmapDrawable(getResources(), friendAvatar);
-                Marker ma = new Marker(map);
-                ma.setVisible(true);
-                ma.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
-                ma.setIcon(displayFriendImage);
-                ma.setImage(displayFriendImage);
-                ma.setId(pos.UID);
-                ma.setTitle(pos.username);
-                ma.setSnippet(pos.UID);
-                map.getOverlays().add(ma);
+                try {
+                    byte[] data = task.getResult();
+                    Bitmap friendAvatar = BitmapFactory.decodeByteArray(data, 0, data.length);
+                    friendAvatar = Bitmap.createScaledBitmap(friendAvatar, 200, 200, true);
+                    Drawable displayFriendImage = new BitmapDrawable(getResources(), friendAvatar);
+                    Marker ma = new Marker(map);
+                    ma.setVisible(true);
+                    ma.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
+                    ma.setIcon(displayFriendImage);
+                    ma.setImage(displayFriendImage);
+                    ma.setId(pos.UID);
+                    ma.setTitle(pos.username);
+                    ma.setSnippet(pos.UID);
+                    map.getOverlays().add(ma);
 //                                ma.setOnMarkerClickListener((marker, mapView) -> {
 //                                    double valueLatitude = marker.getPosition().getLatitude() - myLocationOverlay.getMyLocation().getLatitude();
 //                                    double valueLongitude = marker.getPosition().getLongitude() - myLocationOverlay.getMyLocation().getLongitude();
@@ -641,17 +670,20 @@ public class MapFragment extends Fragment {
 //                                    return true;
 //                                });
 
-                Marker m = new Marker(map);
-                m.setTextLabelFontSize(58);
-                m.setTextLabelBackgroundColor(Color.rgb(255, 255, 200));
-                m.setTextIcon(pos.username);
-                m.setVisible(true);
-                m.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
-                m.setId(pos.UID);
-                m.setTitle(pos.username);
-                m.setSnippet(pos.UID);
-                m.setImage(displayFriendImage);
-                map.getOverlays().add(m);
+                    Marker m = new Marker(map);
+                    m.setTextLabelFontSize(58);
+                    m.setTextLabelBackgroundColor(Color.rgb(255, 255, 200));
+                    m.setTextIcon(pos.username);
+                    m.setVisible(true);
+                    m.setPosition(new GeoPoint(pos.getLatitude(), pos.getLongitude()));
+                    m.setId(pos.UID);
+                    m.setTitle(pos.username);
+                    m.setSnippet(pos.UID);
+                    m.setImage(displayFriendImage);
+                    map.getOverlays().add(m);
+                } catch (Exception e) {
+                    Log.e("Log", e.getMessage());
+                }
             }
         });
     }
